@@ -1,12 +1,78 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { Button } from '../ui';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { storiesApi, usersApi } from '../../services/api';
+
+interface Statistics {
+  storiesCount: number;
+  usersCount: number;
+  locationsCount: number;
+}
 
 const HeroSection: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const [stats, setStats] = useState<Statistics>({
+    storiesCount: 0,
+    usersCount: 0,
+    locationsCount: 0,
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
+  useEffect(() => {
+    loadStatistics();
+  }, []);
+
+  const loadStatistics = async () => {
+    try {
+      setIsLoadingStats(true);
+      
+      // Stories'i çek (public endpoint)
+      const stories = await storiesApi.getAll(true);
+      
+      // Unique locations hesapla
+      const uniqueLocations = new Set<string>();
+      stories.forEach((story) => {
+        if (story.locationName) {
+          uniqueLocations.add(story.locationName);
+        }
+      });
+
+      // Users sayısını çekmeye çalış (başarısız olursa 0 kullan)
+      let usersCount = 0;
+      try {
+        const users = await usersApi.getAll();
+        usersCount = users.length;
+      } catch (error) {
+        // Users endpoint'i public değilse, stories'den unique author sayısını kullan
+        const uniqueAuthors = new Set<string>();
+        stories.forEach((story) => {
+          if (story.author?.id) {
+            uniqueAuthors.add(story.author.id);
+          }
+        });
+        usersCount = uniqueAuthors.size;
+      }
+
+      setStats({
+        storiesCount: stories.length,
+        usersCount: usersCount,
+        locationsCount: uniqueLocations.size,
+      });
+    } catch (error) {
+      console.error('İstatistikler yüklenirken hata:', error);
+      // Hata durumunda varsayılan değerler
+      setStats({
+        storiesCount: 0,
+        usersCount: 0,
+        locationsCount: 0,
+      });
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800">
@@ -59,7 +125,7 @@ const HeroSection: React.FC = () => {
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="lg" variant="success" className="bg-white text-blue-600 hover:bg-gray-100">
+                  <Button size="lg" variant="primary" className="!bg-white !text-blue-600 hover:!bg-gray-100 border-2 border-white">
                     Hemen Başla
                   </Button>
                 </Link>
@@ -80,15 +146,54 @@ const HeroSection: React.FC = () => {
             className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3"
           >
             <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">100+</div>
+              <div className="text-4xl font-bold text-white mb-2">
+                {isLoadingStats ? (
+                  <span className="inline-block animate-pulse">...</span>
+                ) : (
+                  <motion.span
+                    key={stats.storiesCount}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {stats.storiesCount > 0 ? `${stats.storiesCount}+` : '0'}
+                  </motion.span>
+                )}
+              </div>
               <div className="text-blue-200">Paylaşılan Hikaye</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">50+</div>
+              <div className="text-4xl font-bold text-white mb-2">
+                {isLoadingStats ? (
+                  <span className="inline-block animate-pulse">...</span>
+                ) : (
+                  <motion.span
+                    key={stats.usersCount}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {stats.usersCount > 0 ? `${stats.usersCount}+` : '0'}
+                  </motion.span>
+                )}
+              </div>
               <div className="text-blue-200">Aktif Kullanıcı</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-white mb-2">20+</div>
+              <div className="text-4xl font-bold text-white mb-2">
+                {isLoadingStats ? (
+                  <span className="inline-block animate-pulse">...</span>
+                ) : (
+                  <motion.span
+                    key={stats.locationsCount}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {stats.locationsCount > 0 ? `${stats.locationsCount}+` : '0'}
+                  </motion.span>
+                )}
+              </div>
               <div className="text-blue-200">Farklı Lokasyon</div>
             </div>
           </motion.div>

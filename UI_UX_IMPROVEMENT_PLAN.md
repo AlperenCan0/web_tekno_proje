@@ -645,3 +645,4 @@ Bu plan onaylandıktan sonra adım adım implementasyona başlayabiliriz. Hangi 
 
 
 
+
