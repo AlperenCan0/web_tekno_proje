@@ -43,9 +43,9 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             <Link
               to="/"
-              className="flex items-center space-x-2 text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all"
+              className="flex items-center space-x-2 text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent hover:from-amber-700 hover:to-orange-700 transition-all"
             >
-              <BookOpen className="w-7 h-7 text-blue-600" />
+              <BookOpen className="w-7 h-7 text-amber-600" />
               <span>Yerel Hikayeler</span>
             </Link>
           </div>
@@ -60,8 +60,8 @@ const Navbar: React.FC = () => {
                   to={link.to}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     isActive(link.to)
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-amber-50 text-amber-700'
+                      : 'text-gray-700 hover:bg-amber-50 hover:text-amber-700'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -82,7 +82,7 @@ const Navbar: React.FC = () => {
                   <User className="w-4 h-4" />
                   <span className="max-w-[120px] truncate">{user?.username}</span>
                   {user?.role && (
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700">
+                    <span className="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700">
                       {user.role}
                     </span>
                   )}
@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 transition-colors"
                 >
                   Kayıt Ol
                 </Link>
@@ -150,8 +150,8 @@ const Navbar: React.FC = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
                       isActive(link.to)
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-amber-50 text-amber-700'
+                        : 'text-gray-700 hover:bg-amber-50'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -171,7 +171,7 @@ const Navbar: React.FC = () => {
                       <User className="w-5 h-5" />
                       <span className="flex-1">{user?.username}</span>
                       {user?.role && (
-                        <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
+                        <span className="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">
                           {user.role}
                         </span>
                       )}
@@ -197,7 +197,7 @@ const Navbar: React.FC = () => {
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-3 rounded-lg text-base font-medium text-center text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                    className="block px-4 py-3 rounded-lg text-base font-medium text-center text-white bg-amber-600 hover:bg-amber-700 transition-colors"
                   >
                     Kayıt Ol
                   </Link>

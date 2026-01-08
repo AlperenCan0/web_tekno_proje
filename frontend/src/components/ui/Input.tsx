@@ -10,6 +10,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement |
   fullWidth?: boolean;
   as?: 'input' | 'textarea';
   rows?: number;
+  labelColor?: 'light' | 'dark'; // light: beyaz arka plan için (text-gray-700), dark: koyu arka plan için (text-white)
 }
 
 const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
@@ -26,6 +27,7 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
       as = 'input',
       rows,
       type,
+      labelColor = 'light',
       ...props
     },
     ref
@@ -51,10 +53,16 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className={`block text-sm font-medium mb-2 ${
+              labelColor === 'dark' ? 'text-white' : 'text-gray-700'
+            }`}
           >
             {label}
-            {props.required && <span className="text-red-500 ml-1">*</span>}
+            {props.required && (
+              <span className={`ml-1 ${
+                labelColor === 'dark' ? 'text-red-300' : 'text-red-500'
+              }`}>*</span>
+            )}
           </label>
         )}
 
@@ -120,7 +128,9 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
         {error && (
           <p
             id={`${inputId}-error`}
-            className="mt-1 text-sm text-red-600 flex items-center gap-1"
+            className={`mt-1 text-sm flex items-center gap-1 ${
+              labelColor === 'dark' ? 'text-red-200' : 'text-red-600'
+            }`}
             role="alert"
           >
             <AlertCircle className="w-4 h-4" />
@@ -131,7 +141,9 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
         {helperText && !error && (
           <p
             id={`${inputId}-helper`}
-            className="mt-1 text-sm text-gray-500"
+            className={`mt-1 text-sm ${
+              labelColor === 'dark' ? 'text-amber-200' : 'text-gray-500'
+            }`}
           >
             {helperText}
           </p>

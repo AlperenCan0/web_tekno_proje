@@ -32,7 +32,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <button
               onClick={onClearCategories}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategories.length === 0
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-amber-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
@@ -43,7 +43,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 key={category.id}
                 onClick={() => onCategoryToggle(category.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategories.includes(category.id)
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-amber-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
@@ -61,7 +61,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             <option value="newest">En Yeni</option>
             <option value="oldest">En Eski</option>

@@ -121,7 +121,7 @@ const StoryDetail: React.FC = () => {
       {/* Hero Image Section - Küçültülmüş ve tıklanabilir */}
       {story.photos && story.photos.length > 0 && (
         <div 
-          className="relative h-64 md:h-80 overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 cursor-pointer group"
+          className="relative h-64 md:h-80 overflow-hidden bg-gradient-to-br from-amber-900 via-orange-900 to-amber-800 cursor-pointer group"
           onClick={() => {
             setSelectedImageIndex(0);
             setImageModalOpen(true);
@@ -266,7 +266,7 @@ const StoryDetail: React.FC = () => {
               <Card>
                 <CardBody>
                   <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-blue-600" />
+                    <MapPin className="w-5 h-5 text-amber-600" />
                     Konum
                   </h2>
                   <div className="rounded-lg overflow-hidden">

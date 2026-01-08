@@ -163,7 +163,7 @@ const Profile: React.FC = () => {
                 <Card>
                     <CardBody>
                         <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                            <User className="w-5 h-5 text-blue-600" />
+                            <User className="w-5 h-5 text-amber-600" />
                             Profil Bilgileri
                         </h3>
                         <form onSubmit={handleUpdateProfile} className="space-y-4">
@@ -176,13 +176,13 @@ const Profile: React.FC = () => {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600">
+                                        <div className="w-full h-full flex items-center justify-center bg-amber-100 text-amber-600">
                                             <User className="w-8 h-8" />
                                         </div>
                                     )}
                                 </div>
                                 <div>
-                                    <label className="cursor-pointer bg-white border border-gray-300 rounded-md py-2 px-4 inline-flex items-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <label className="cursor-pointer bg-white border border-gray-300 rounded-md py-2 px-4 inline-flex items-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
                                         <Camera className="w-4 h-4 mr-2" />
                                         {uploadingAvatar ? 'Yükleniyor...' : 'Fotoğraf Değiştir'}
                                         <input
@@ -207,7 +207,7 @@ const Profile: React.FC = () => {
                                     type="text"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     placeholder="Kullanıcı adınız"
                                 />
                             </div>
@@ -219,7 +219,7 @@ const Profile: React.FC = () => {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     placeholder="E-posta adresiniz"
                                 />
                             </div>
@@ -238,7 +238,7 @@ const Profile: React.FC = () => {
             <Card>
                 <CardBody>
                     <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                        <Lock className="w-5 h-5 text-blue-600" />
+                        <Lock className="w-5 h-5 text-amber-600" />
                         Şifre Değiştir
                     </h3>
                     <form onSubmit={handleChangePassword} className="space-y-4">
@@ -250,7 +250,7 @@ const Profile: React.FC = () => {
                                 type="password"
                                 value={currentPassword}
                                 onChange={(e) => setCurrentPassword(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                 placeholder="Mevcut şifreniz"
                                 required
                             />
@@ -263,7 +263,7 @@ const Profile: React.FC = () => {
                                 type="password"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                 placeholder="Yeni şifreniz"
                                 required
                             />
@@ -276,7 +276,7 @@ const Profile: React.FC = () => {
                                 type="password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                                 placeholder="Yeni şifrenizi tekrar girin"
                                 required
                             />
@@ -336,7 +336,7 @@ const Profile: React.FC = () => {
                             <div className="text-center py-8 text-gray-500">
                                 <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
                                 <p>Henüz hikayeniz yok</p>
-                                <Link to="/create-story" className="text-blue-600 hover:underline mt-2 inline-block">
+                                <Link to="/create-story" className="text-amber-600 hover:underline mt-2 inline-block">
                                     İlk hikayenizi oluşturun
                                 </Link>
                             </div>
@@ -350,7 +350,7 @@ const Profile: React.FC = () => {
             <Card>
                 <CardBody>
                     <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
-                        <MessageCircle className="w-5 h-5 text-blue-600" />
+                        <MessageCircle className="w-5 h-5 text-amber-600" />
                         Hikayelerime Gelen Yorumlar
                     </h3>
                     {myComments.length > 0 ? (
@@ -362,8 +362,8 @@ const Profile: React.FC = () => {
                                 >
                                     <div className="flex items-start justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <User className="w-4 h-4 text-blue-600" />
+                                            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                                                <User className="w-4 h-4 text-amber-600" />
                                             </div>
                                             <div>
                                                 <span className="font-medium text-gray-900">
@@ -378,7 +378,7 @@ const Profile: React.FC = () => {
                                     <p className="text-gray-700 mb-2">{comment.content}</p>
                                     <Link
                                         to={`/stories/${(comment as any).story?.id}`}
-                                        className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+                                        className="text-sm text-amber-600 hover:underline flex items-center gap-1"
                                     >
                                         <BookOpen className="w-3 h-3" />
                                         {(comment as any).story?.title}
@@ -406,7 +406,7 @@ const Profile: React.FC = () => {
                 className="mb-8"
             >
                 <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
+                    <div className="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
                         {avatar ? (
                             <img
                                 src={getPhotoUrl(avatar)}
@@ -446,7 +446,7 @@ const Profile: React.FC = () => {
                                 <button
                                     onClick={() => setActiveTab('settings')}
                                     className={`w-full px-4 py-3 text-left flex items-center justify-between ${activeTab === 'settings'
-                                        ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                                        ? 'bg-amber-50 text-amber-600 border-l-4 border-amber-600'
                                         : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
@@ -457,11 +457,11 @@ const Profile: React.FC = () => {
                                     <ChevronRight className={`w-4 h-4 transition-transform ${activeTab === 'settings' ? 'rotate-90' : ''}`} />
                                 </button>
                                 {activeTab === 'settings' && (
-                                    <div className="bg-gray-50 border-l-4 border-blue-600">
+                                    <div className="bg-gray-50 border-l-4 border-amber-600">
                                         <button
                                             onClick={() => setSettingsSubTab('profile')}
                                             className={`w-full px-8 py-2 text-left text-sm ${settingsSubTab === 'profile'
-                                                ? 'text-blue-600 font-medium'
+                                                ? 'text-amber-600 font-medium'
                                                 : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                         >
@@ -470,7 +470,7 @@ const Profile: React.FC = () => {
                                         <button
                                             onClick={() => setSettingsSubTab('password')}
                                             className={`w-full px-8 py-2 text-left text-sm ${settingsSubTab === 'password'
-                                                ? 'text-blue-600 font-medium'
+                                                ? 'text-amber-600 font-medium'
                                                 : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                         >
@@ -484,7 +484,7 @@ const Profile: React.FC = () => {
                                 <button
                                     onClick={() => setActiveTab('interactions')}
                                     className={`w-full px-4 py-3 text-left flex items-center justify-between ${activeTab === 'interactions'
-                                        ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
+                                        ? 'bg-amber-50 text-amber-600 border-l-4 border-amber-600'
                                         : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
@@ -495,11 +495,11 @@ const Profile: React.FC = () => {
                                     <ChevronRight className={`w-4 h-4 transition-transform ${activeTab === 'interactions' ? 'rotate-90' : ''}`} />
                                 </button>
                                 {activeTab === 'interactions' && (
-                                    <div className="bg-gray-50 border-l-4 border-blue-600">
+                                    <div className="bg-gray-50 border-l-4 border-amber-600">
                                         <button
                                             onClick={() => setInteractionsSubTab('favorites')}
                                             className={`w-full px-8 py-2 text-left text-sm ${interactionsSubTab === 'favorites'
-                                                ? 'text-blue-600 font-medium'
+                                                ? 'text-amber-600 font-medium'
                                                 : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                         >
@@ -508,7 +508,7 @@ const Profile: React.FC = () => {
                                         <button
                                             onClick={() => setInteractionsSubTab('comments')}
                                             className={`w-full px-8 py-2 text-left text-sm ${interactionsSubTab === 'comments'
-                                                ? 'text-blue-600 font-medium'
+                                                ? 'text-amber-600 font-medium'
                                                 : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                         >

@@ -9,7 +9,6 @@ import { StoriesModule } from './stories/stories.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CommentsModule } from './comments/comments.module';
 import { UploadModule } from './upload/upload.module';
-import { SeedModule } from './seed/seed.module';
 import { User, Profile, Story, StoryLike, Category, Comment } from './entities';
 
 /**
@@ -32,7 +31,7 @@ import { User, Profile, Story, StoryLike, Category, Comment } from './entities';
       database: process.env.DB_DATABASE || 'local_stories',
       entities: [User, Profile, Story, StoryLike, Category, Comment],
       synchronize: process.env.NODE_ENV !== 'production', // Production'da false olmalı
-      logging: process.env.NODE_ENV === 'development',
+      logging: false, // Logging kapalı - gereksiz log'ları önlemek için
     }),
     // Feature modülleri
     AuthModule,
@@ -41,7 +40,6 @@ import { User, Profile, Story, StoryLike, Category, Comment } from './entities';
     CategoriesModule,
     CommentsModule,
     UploadModule,
-    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

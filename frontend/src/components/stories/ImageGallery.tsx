@@ -119,7 +119,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       {/* Thumbnail Gallery */}
       <div className="mt-8">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Maximize2 className="w-5 h-5 text-blue-600" />
+          <Maximize2 className="w-5 h-5 text-amber-600" />
           Fotoğraflar ({images.length})
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -142,7 +142,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                 <Maximize2 className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               {index === 0 && (
-                <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-medium">
+                <div className="absolute top-2 left-2 bg-amber-600 text-white text-xs px-2 py-1 rounded-full font-medium">
                   Ana Fotoğraf
                 </div>
               )}
@@ -248,7 +248,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                         }}
                         className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
                           index === selectedIndex
-                            ? 'border-blue-500 ring-2 ring-blue-500/50'
+                            ? 'border-amber-500 ring-2 ring-amber-500/50'
                             : 'border-transparent hover:border-gray-400'
                         }`}
                       >

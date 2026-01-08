@@ -286,7 +286,7 @@ const StoryForm: React.FC<StoryFormProps> = ({
                     type="checkbox"
                     checked={isPublished}
                     onChange={(e) => setIsPublished(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
                 />
                 <label htmlFor="isPublished" className="ml-2 block text-sm text-gray-900">
                     {mode === 'create' ? 'Hemen yayınla' : 'Yayınla'}
@@ -298,7 +298,7 @@ const StoryForm: React.FC<StoryFormProps> = ({
                 <button
                     type="submit"
                     disabled={isSubmitting || isUploading}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50 transition-colors"
                 >
                     {isSubmitting ? loadingText : buttonText}
                 </button>

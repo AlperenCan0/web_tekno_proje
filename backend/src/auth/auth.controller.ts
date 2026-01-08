@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { CreateAdminDto } from './dto/create-admin.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 
 /**
@@ -38,6 +39,21 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Geçersiz e-posta veya şifre' })
   async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
     return this.authService.login(loginDto);
+  }
+
+  /**
+   * POST /auth/create-admin - İlk admin kullanıcısını oluşturur
+   * Sadece hiç admin yoksa çalışır, public endpoint
+   * Normal login ekranından giriş yapılabilir
+   */
+  @Post('create-admin')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'İlk admin kullanıcısını oluşturur (Sadece hiç admin yoksa)' })
+  @ApiResponse({ status: 201, description: 'Admin başarıyla oluşturuldu', type: AuthResponseDto })
+  @ApiResponse({ status: 400, description: 'Sistemde zaten bir admin mevcut' })
+  @ApiResponse({ status: 409, description: 'E-posta veya kullanıcı adı zaten kullanılıyor' })
+  async createFirstAdmin(@Body() createAdminDto: CreateAdminDto): Promise<AuthResponseDto> {
+    return this.authService.createFirstAdmin(createAdminDto);
   }
 }
 

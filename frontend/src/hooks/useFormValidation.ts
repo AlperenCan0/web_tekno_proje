@@ -76,6 +76,12 @@ export const useFormValidation = <T extends Record<string, any>>(
     setTouched({});
   }, [initialValues]);
 
+  const resetForm = useCallback((newValues: T) => {
+    setValues(newValues);
+    setErrors({});
+    setTouched({});
+  }, []);
+
   return {
     values,
     errors,
@@ -84,6 +90,7 @@ export const useFormValidation = <T extends Record<string, any>>(
     handleBlur,
     validateAll,
     reset,
+    resetForm,
     setValues,
   };
 };
@@ -114,6 +121,10 @@ export const validationRules = {
     if (!value || (typeof value === 'string' && !value.trim())) {
       return 'Bu alan gereklidir';
     }
+    return null;
+  },
+  optional: (value: any): string | null => {
+    // Optional field - her zaman geçerli
     return null;
   },
 };

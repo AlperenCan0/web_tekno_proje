@@ -51,7 +51,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     <Card>
       <CardBody>
         <div className="flex items-center gap-2 mb-6">
-          <MessageCircle className="w-5 h-5 text-blue-600" />
+          <MessageCircle className="w-5 h-5 text-amber-600" />
           <h2 className="text-2xl font-semibold text-gray-900">
             Yorumlar ({comments.length})
           </h2>
@@ -86,7 +86,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 className="border-b border-gray-200 pb-4 last:border-0"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                     {comment.author.username.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">

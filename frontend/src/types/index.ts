@@ -7,6 +7,7 @@ export interface User {
   email: string;
   username: string;
   role: 'User' | 'Admin' | 'SuperAdmin';
+  isActive?: boolean;
   profile?: Profile;
 }
 

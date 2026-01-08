@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthLayout } from '../components/auth';
 import { Input, Button } from '../components/ui';
@@ -85,12 +86,16 @@ const Register: React.FC = () => {
     >
       <form className="space-y-5" onSubmit={handleSubmit} noValidate>
         {submitError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-500/20 backdrop-blur-sm border border-red-400/50 rounded-xl p-4 flex items-start gap-3"
+          >
+            <AlertCircle className="w-5 h-5 text-red-300 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-800">{submitError}</p>
+              <p className="text-sm font-medium text-red-100">{submitError}</p>
             </div>
-          </div>
+          </motion.div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -106,6 +111,8 @@ const Register: React.FC = () => {
             required
             leftIcon={<UserCircle className="w-5 h-5" />}
             autoComplete="given-name"
+            className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+            labelColor="dark"
           />
           <Input
             id="lastName"
@@ -118,6 +125,8 @@ const Register: React.FC = () => {
             error={touched.lastName ? errors.lastName : undefined}
             required
             autoComplete="family-name"
+            className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+            labelColor="dark"
           />
         </div>
 
@@ -133,6 +142,8 @@ const Register: React.FC = () => {
           required
           leftIcon={<Mail className="w-5 h-5" />}
           autoComplete="email"
+          className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+          labelColor="dark"
         />
 
         <Input
@@ -149,6 +160,8 @@ const Register: React.FC = () => {
           leftIcon={<User className="w-5 h-5" />}
           helperText={!touched.username || !errors.username ? "En az 3 karakter, sadece harf, rakam ve alt çizgi" : undefined}
           autoComplete="username"
+          className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+          labelColor="dark"
         />
 
         <div>
@@ -165,6 +178,8 @@ const Register: React.FC = () => {
             minLength={6}
             leftIcon={<Lock className="w-5 h-5" />}
             autoComplete="new-password"
+            className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+            labelColor="dark"
           />
           {values.password && (
             <PasswordStrength password={values.password} />
@@ -177,20 +192,20 @@ const Register: React.FC = () => {
             type="checkbox"
             checked={termsAccepted}
             onChange={(e) => setTermsAccepted(e.target.checked)}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
+            className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-white/30 rounded mt-1 bg-white/50 cursor-pointer"
             required
           />
-          <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-            <Link to="/terms" className="text-blue-600 hover:text-blue-800 underline">
+          <label htmlFor="terms" className="ml-2 text-sm text-amber-100 cursor-pointer">
+            <Link to="/terms" className="text-white hover:text-yellow-300 underline transition-colors">
               Kullanım şartlarını
             </Link>{' '}
             ve{' '}
-            <Link to="/privacy" className="text-blue-600 hover:text-blue-800 underline">
+            <Link to="/privacy" className="text-white hover:text-yellow-300 underline transition-colors">
               gizlilik politikasını
             </Link>{' '}
             kabul ediyorum
             {!termsAccepted && submitError && (
-              <span className="text-red-600 ml-1">*</span>
+              <span className="text-red-300 ml-1">*</span>
             )}
           </label>
         </div>
@@ -201,16 +216,17 @@ const Register: React.FC = () => {
           size="lg"
           fullWidth
           isLoading={isLoading}
+          className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-lg shadow-amber-500/50"
         >
           Kayıt Ol
         </Button>
 
-        <div className="text-center pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
+        <div className="text-center pt-4 border-t border-white/20">
+          <p className="text-sm text-amber-100">
             Zaten hesabınız var mı?{' '}
             <Link
               to="/login"
-              className="font-medium text-blue-600 hover:text-blue-800"
+              className="font-medium text-white hover:text-yellow-300 transition-colors underline decoration-2 underline-offset-2"
             >
               Giriş yapın
             </Link>

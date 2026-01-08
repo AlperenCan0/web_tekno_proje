@@ -18,6 +18,12 @@ export const MESSAGES = {
     LIKE_ADDED: 'Beğenildi',
     DISLIKE_ADDED: 'Beğenilmedi',
     VOTE_REMOVED: 'Oy geri alındı',
+    USER_CREATED: 'Kullanıcı başarıyla oluşturuldu',
+    USER_UPDATED: 'Kullanıcı başarıyla güncellendi',
+    USER_DELETED: 'Kullanıcı silindi',
+    CATEGORY_CREATED: 'Kategori başarıyla oluşturuldu',
+    CATEGORY_UPDATED: 'Kategori başarıyla güncellendi',
+    CATEGORY_DELETED: 'Kategori silindi',
   },
 
   // Error messages
@@ -40,6 +46,12 @@ export const MESSAGES = {
     AUTH_REQUIRED: 'Bu işlem için giriş yapmalısınız',
     COMMENT_EMPTY: 'Yorum boş olamaz',
     TITLE_CONTENT_REQUIRED: 'Başlık ve içerik zorunludur',
+    USER_CREATE_FAILED: 'Kullanıcı oluşturulurken bir hata oluştu',
+    USER_UPDATE_FAILED: 'Kullanıcı güncellenirken bir hata oluştu',
+    USER_DELETE_FAILED: 'Kullanıcı silinirken bir hata oluştu',
+    CATEGORY_CREATE_FAILED: 'Kategori oluşturulurken bir hata oluştu',
+    CATEGORY_UPDATE_FAILED: 'Kategori güncellenirken bir hata oluştu',
+    CATEGORY_DELETE_FAILED: 'Kategori silinirken bir hata oluştu',
   },
 
   // Validation messages

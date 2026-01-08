@@ -15,7 +15,7 @@ const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
     <Card>
       <CardBody>
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0">
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-amber-500 to-orange-600 flex-shrink-0">
             {author.profile?.avatar ? (
               <img
                 src={getPhotoUrl(author.profile.avatar)}

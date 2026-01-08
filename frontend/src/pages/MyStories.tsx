@@ -108,7 +108,7 @@ const MyStories: React.FC = () => {
                 <div className="flex items-center space-x-2 mt-auto">
                   <Link
                     to={`/edit-story/${story.id}`}
-                    className="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    className="flex-1 text-center px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
                   >
                     Düzenle
                   </Link>

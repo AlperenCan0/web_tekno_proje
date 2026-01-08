@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthLayout } from '../components/auth';
 import { Input, Button } from '../components/ui';
@@ -69,12 +70,16 @@ const Login: React.FC = () => {
     >
       <form className="space-y-6" onSubmit={handleSubmit} noValidate>
         {submitError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-500/20 backdrop-blur-sm border border-red-400/50 rounded-xl p-4 flex items-start gap-3"
+          >
+            <AlertCircle className="w-5 h-5 text-red-300 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-800">{submitError}</p>
+              <p className="text-sm font-medium text-red-100">{submitError}</p>
             </div>
-          </div>
+          </motion.div>
         )}
 
         <div className="space-y-4">
@@ -90,6 +95,8 @@ const Login: React.FC = () => {
             required
             leftIcon={<Mail className="w-5 h-5" />}
             autoComplete="email"
+            className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+            labelColor="dark"
           />
           <Input
             id="password"
@@ -103,20 +110,22 @@ const Login: React.FC = () => {
             required
             leftIcon={<Lock className="w-5 h-5" />}
             autoComplete="current-password"
+            className="bg-white/90 backdrop-blur-sm border-white/30 focus:bg-white"
+            labelColor="dark"
           />
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="flex items-center">
+          <label className="flex items-center cursor-pointer group">
             <input
               type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-white/30 rounded bg-white/50"
             />
-            <span className="ml-2 text-sm text-gray-600">Beni hatırla</span>
+            <span className="ml-2 text-sm text-amber-100 group-hover:text-white transition-colors">Beni hatırla</span>
           </label>
           <Link
             to="/forgot-password"
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm text-amber-200 hover:text-white transition-colors font-medium"
           >
             Şifremi unuttum
           </Link>
@@ -128,16 +137,17 @@ const Login: React.FC = () => {
           size="lg"
           fullWidth
           isLoading={isLoading}
+          className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-lg shadow-amber-500/50"
         >
           Giriş Yap
         </Button>
 
-        <div className="text-center pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
+        <div className="text-center pt-4 border-t border-white/20">
+          <p className="text-sm text-amber-100">
             Hesabınız yok mu?{' '}
             <Link
               to="/register"
-              className="font-medium text-blue-600 hover:text-blue-800"
+              className="font-medium text-white hover:text-yellow-300 transition-colors underline decoration-2 underline-offset-2"
             >
               Kayıt olun
             </Link>

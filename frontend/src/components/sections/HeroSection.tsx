@@ -82,15 +82,15 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+    <div className="relative overflow-hidden bg-gradient-to-br from-amber-900 via-orange-900 to-amber-800">
       {/* Animated Background Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 animate-gradient-xy"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-amber-700/20 via-orange-700/20 to-yellow-700/20 animate-gradient-xy"></div>
       
       {/* Animated Mesh Gradient */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-amber-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-yellow-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Background Pattern */}
@@ -119,7 +119,7 @@ const HeroSection: React.FC = () => {
                     animate={{ rotateX: 0, y: '0%', opacity: 1 }}
                     exit={{ rotateX: 90, y: '-50%', opacity: 0 }}
                     transition={{ duration: 1.6, ease: [0.4, 0, 0.2, 1] }}
-                    className="bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 absolute inset-x-0 mx-auto"
+                    className="bg-gradient-to-r from-amber-200 via-yellow-200 to-orange-200 absolute inset-x-0 mx-auto"
                     style={{
                       transformStyle: 'preserve-3d',
                       transformOrigin: 'center center',
@@ -134,7 +134,7 @@ const HeroSection: React.FC = () => {
                 </AnimatePresence>
               </span>
             </h1>
-            <p className="mt-6 max-w-3xl mx-auto text-xl text-purple-100 drop-shadow-md">
+            <p className="mt-6 max-w-3xl mx-auto text-xl text-amber-100 drop-shadow-md">
               Yerel hikayelerinizi paylaşın, topluluğunuzla bağlantı kurun ve unutulmaz anıları birlikte yaşayın.
             </p>
           </motion.div>
@@ -148,7 +148,7 @@ const HeroSection: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <Link to="/create-story">
-                  <Button size="lg" variant="secondary" className="!bg-white !text-blue-600 hover:!bg-gray-100 border-2 border-white shadow-lg">
+                  <Button size="lg" variant="secondary" className="!bg-white !text-amber-700 hover:!bg-amber-50 border-2 border-white shadow-lg">
                     <Sparkles className="w-5 h-5 mr-2" />
                     Hikaye Oluştur
                   </Button>
@@ -159,11 +159,11 @@ const HeroSection: React.FC = () => {
                     Hikayeleri Keşfet
                   </Button>
                 </Link>
-              </>
+              </> 
             ) : (
               <>
                 <Link to="/register">
-                  <Button size="lg" variant="primary" className="!bg-white !text-blue-600 hover:!bg-gray-100 border-2 border-white">
+                  <Button size="lg" variant="primary" className="!bg-white !text-amber-700 hover:!bg-amber-50 border-2 border-white">
                     Hemen Başla
                   </Button>
                 </Link>
@@ -198,7 +198,7 @@ const HeroSection: React.FC = () => {
                   </motion.span>
                 )}
               </div>
-              <div className="text-blue-200">Paylaşılan Hikaye</div>
+              <div className="text-amber-200">Paylaşılan Hikaye</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-white mb-2">
@@ -215,7 +215,7 @@ const HeroSection: React.FC = () => {
                   </motion.span>
                 )}
               </div>
-              <div className="text-blue-200">Aktif Kullanıcı</div>
+              <div className="text-amber-200">Aktif Kullanıcı</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold text-white mb-2">
@@ -232,7 +232,7 @@ const HeroSection: React.FC = () => {
                   </motion.span>
                 )}
               </div>
-              <div className="text-blue-200">Farklı Lokasyon</div>
+              <div className="text-amber-200">Farklı Lokasyon</div>
             </div>
           </motion.div>
         </div>

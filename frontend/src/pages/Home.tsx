@@ -12,7 +12,7 @@ const Home: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-amber-50">
       {/* Hero Section */}
       <HeroSection />
 
@@ -25,7 +25,7 @@ const Home: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent mb-4">
               Neler Sunuyoruz?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">

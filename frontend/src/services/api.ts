@@ -140,6 +140,29 @@ export const categoriesApi = {
     const response = await api.get(`/categories/${id}`);
     return response.data;
   },
+
+  /**
+   * Yeni kategori oluşturur (Admin/SuperAdmin)
+   */
+  create: async (data: { name: string; description?: string }): Promise<Category> => {
+    const response = await api.post('/categories', data);
+    return response.data;
+  },
+
+  /**
+   * Kategori günceller (Admin/SuperAdmin)
+   */
+  update: async (id: string, data: Partial<Category>): Promise<Category> => {
+    const response = await api.patch(`/categories/${id}`, data);
+    return response.data;
+  },
+
+  /**
+   * Kategori siler (Admin/SuperAdmin)
+   */
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/categories/${id}`);
+  },
 };
 
 // Users API
@@ -153,10 +176,34 @@ export const usersApi = {
   },
 
   /**
+   * ID'ye göre kullanıcı getirir
+   */
+  getById: async (id: string): Promise<User> => {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  },
+
+  /**
    * Mevcut kullanıcı bilgilerini getirir
    */
   getMe: async (): Promise<User> => {
     const response = await api.get('/users/me');
+    return response.data;
+  },
+
+  /**
+   * Yeni kullanıcı oluşturur (Admin/SuperAdmin)
+   */
+  create: async (data: {
+    email: string;
+    username: string;
+    password: string;
+    role?: 'User' | 'Admin' | 'SuperAdmin';
+    firstName?: string;
+    lastName?: string;
+    isActive?: boolean;
+  }): Promise<User> => {
+    const response = await api.post('/users', data);
     return response.data;
   },
 
@@ -166,6 +213,13 @@ export const usersApi = {
   update: async (id: string, data: Partial<User> & { avatar?: string; firstName?: string; lastName?: string }): Promise<User> => {
     const response = await api.patch(`/users/${id}`, data);
     return response.data;
+  },
+
+  /**
+   * Kullanıcıyı siler (Admin/SuperAdmin)
+   */
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/users/${id}`);
   },
 };
 

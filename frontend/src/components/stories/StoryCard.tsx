@@ -41,7 +41,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, delay = 0 }) => {
               {story.categories.slice(0, 2).map((category) => (
                 <span
                   key={category.id}
-                  className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+                  className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium"
                 >
                   {category.name}
                 </span>
@@ -56,7 +56,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, delay = 0 }) => {
 
           {/* Title */}
           <Link to={`/stories/${story.id}`}>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-2">
               {story.title}
             </h3>
           </Link>
