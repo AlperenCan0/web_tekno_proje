@@ -10,7 +10,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CommentsModule } from './comments/comments.module';
 import { UploadModule } from './upload/upload.module';
 import { SeedModule } from './seed/seed.module';
-import { User, Profile, Story, Category, Comment } from './entities';
+import { User, Profile, Story, StoryLike, Category, Comment } from './entities';
 
 /**
  * Ana uygulama modülü
@@ -22,11 +22,15 @@ import { User, Profile, Story, Category, Comment } from './entities';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // SQLite veritabanı bağlantısı
+    // PostgreSQL veritabanı bağlantısı
     TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: process.env.DB_DATABASE || './database.sqlite',
-      entities: [User, Profile, Story, Category, Comment],
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      database: process.env.DB_DATABASE || 'local_stories',
+      entities: [User, Profile, Story, StoryLike, Category, Comment],
       synchronize: process.env.NODE_ENV !== 'production', // Production'da false olmalı
       logging: process.env.NODE_ENV === 'development',
     }),
@@ -42,5 +46,5 @@ import { User, Profile, Story, Category, Comment } from './entities';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
 

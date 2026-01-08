@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Card, CardBody } from '../ui';
 import { MapPin, Heart, MessageCircle, Calendar } from 'lucide-react';
 import { Story } from '../../types';
+import { getPhotoUrl } from '../../config';
 
 export interface StoryCardProps {
   story: Story;
@@ -24,7 +25,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, delay = 0 }) => {
           <Link to={`/stories/${story.id}`} className="block overflow-hidden">
             <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
               <img
-                src={`http://localhost:3000${story.photos[0]}`}
+                src={getPhotoUrl(story.photos[0])}
                 alt={story.title}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />

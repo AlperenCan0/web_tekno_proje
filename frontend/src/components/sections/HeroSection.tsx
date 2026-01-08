@@ -14,6 +14,8 @@ interface Statistics {
 
 const HeroSection: React.FC = () => {
   const { isAuthenticated } = useAuth();
+  const [currentWord, setCurrentWord] = useState(0);
+  const words = ['Paylaşın', 'Keşfedin'];
   const [stats, setStats] = useState<Statistics>({
     storiesCount: 0,
     usersCount: 0,
@@ -23,15 +25,20 @@ const HeroSection: React.FC = () => {
 
   useEffect(() => {
     loadStatistics();
+    // Her 2 saniyede bir kelimeyi değiştir
+    const interval = setInterval(() => {
+      setCurrentWord((prev) => (prev + 1) % words.length);
+    }, 2000);
+    return () => clearInterval(interval);
   }, []);
 
   const loadStatistics = async () => {
     try {
       setIsLoadingStats(true);
-      
+
       // Stories'i çek (public endpoint)
       const stories = await storiesApi.getAll(true);
-      
+
       // Unique locations hesapla
       const uniqueLocations = new Set<string>();
       stories.forEach((story) => {
@@ -92,8 +99,16 @@ const HeroSection: React.FC = () => {
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6">
               Yerel Hikayelerinizi
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                Paylaşın ve Keşfedin
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300 h-[1.2em]">
+                <motion.span
+                  key={currentWord}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {words[currentWord]}
+                </motion.span>
               </span>
             </h1>
             <p className="mt-6 max-w-3xl mx-auto text-xl text-blue-100">
@@ -110,7 +125,7 @@ const HeroSection: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <Link to="/create-story">
-                  <Button size="lg" variant="success" className="bg-white text-blue-600 hover:bg-gray-100">
+                  <Button size="lg" variant="secondary" className="!bg-white !text-blue-600 hover:!bg-gray-100 border-2 border-white shadow-lg">
                     <Sparkles className="w-5 h-5 mr-2" />
                     Hikaye Oluştur
                   </Button>

@@ -9,6 +9,7 @@ import { Container } from '../components/layout';
 import { AuthorCard, CommentSection } from '../components/stories';
 import { ArrowLeft, Heart, MapPin, Calendar, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getPhotoUrl } from '../config';
 
 /**
  * Story Detail Page Component - Hikaye detay sayfası
@@ -84,7 +85,7 @@ const StoryDetail: React.FC = () => {
       {story.photos && story.photos.length > 0 && (
         <div className="relative h-96 md:h-[500px] overflow-hidden">
           <img
-            src={`http://localhost:3000${story.photos[0]}`}
+            src={getPhotoUrl(story.photos[0])}
             alt={story.title}
             className="w-full h-full object-cover"
           />
@@ -201,7 +202,7 @@ const StoryDetail: React.FC = () => {
                     {story.photos.slice(1).map((photo, index) => (
                       <img
                         key={index}
-                        src={`http://localhost:3000${photo}`}
+                        src={getPhotoUrl(photo)}
                         alt={`${story.title} - Fotoğraf ${index + 2}`}
                         className="w-full h-64 object-cover rounded-lg shadow-md"
                       />

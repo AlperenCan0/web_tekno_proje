@@ -1,5 +1,5 @@
-import React, { forwardRef } from 'react';
-import { AlertCircle } from 'lucide-react';
+import React, { forwardRef, useState } from 'react';
+import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   label?: string;
@@ -25,12 +25,15 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
       id,
       as = 'input',
       rows,
+      type,
       ...props
     },
     ref
   ) => {
+    const [showPassword, setShowPassword] = useState(false);
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
     const hasError = !!error;
+    const isPassword = type === 'password';
 
     const baseStyles = 'w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200';
     const normalStyles = 'border-gray-300 focus:ring-primary-500';
@@ -38,7 +41,10 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
     const inputStyles = hasError ? errorStyles : normalStyles;
 
     const paddingLeft = leftIcon ? 'pl-10' : '';
-    const paddingRight = rightIcon || hasError ? 'pr-10' : '';
+    const paddingRight = rightIcon || hasError || isPassword ? 'pr-10' : '';
+
+    // Password toggle için gerçek input type
+    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
     return (
       <div className={fullWidth ? 'w-full' : ''}>
@@ -51,14 +57,14 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
             {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
         )}
-        
+
         <div className="relative">
           {leftIcon && (
             <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               {leftIcon}
             </div>
           )}
-          
+
           {as === 'textarea' ? (
             <textarea
               ref={ref as React.Ref<HTMLTextAreaElement>}
@@ -73,26 +79,44 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
             <input
               ref={ref as React.Ref<HTMLInputElement>}
               id={inputId}
+              type={inputType}
               className={`${baseStyles} ${inputStyles} ${paddingLeft} ${paddingRight} ${className}`}
               aria-invalid={hasError}
               aria-describedby={hasError ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
               {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
             />
           )}
-          
+
+          {/* Password visibility toggle */}
+          {isPassword && !hasError && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+              tabIndex={-1}
+              aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          )}
+
           {hasError && (
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
               <AlertCircle className="w-5 h-5" />
             </div>
           )}
-          
-          {rightIcon && !hasError && (
+
+          {rightIcon && !hasError && !isPassword && (
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               {rightIcon}
             </div>
           )}
         </div>
-        
+
         {error && (
           <p
             id={`${inputId}-error`}
@@ -103,7 +127,7 @@ const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputProps>(
             {error}
           </p>
         )}
-        
+
         {helperText && !error && (
           <p
             id={`${inputId}-helper`}

@@ -1,10 +1,24 @@
-import { useState, useCallback, useMemo } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Leaflet default marker icon fix
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Fix for default marker icon
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 /**
  * Location Picker Component - Haritadan konum seçme bileşeni
- * Kullanıcılar haritaya tıklayarak konum seçebilir
- * Seçilen konum marker ile gösterilir
+ * OpenStreetMap tabanlı - API key gerektirmez
  */
 
 interface LocationPickerProps {
@@ -13,6 +27,30 @@ interface LocationPickerProps {
   onLocationSelect: (lat: number, lng: number) => void;
   height?: string;
 }
+
+// Harita tıklama olaylarını yakalayan bileşen
+const MapClickHandler: React.FC<{
+  onLocationSelect: (lat: number, lng: number) => void;
+  setPosition: (pos: { lat: number; lng: number }) => void;
+}> = ({ onLocationSelect, setPosition }) => {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      setPosition({ lat, lng });
+      onLocationSelect(lat, lng);
+    },
+  });
+  return null;
+};
+
+// Harita merkezini değiştiren bileşen
+const ChangeView: React.FC<{ center: [number, number]; zoom: number }> = ({ center, zoom }) => {
+  const map = useMap();
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map]);
+  return null;
+};
 
 const LocationPicker: React.FC<LocationPickerProps> = ({
   latitude,
@@ -24,87 +62,63 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
     latitude && longitude ? { lat: latitude, lng: longitude } : null
   );
 
-  // Harita merkezi - Seçili konum varsa onu, yoksa Türkiye merkezini kullan
-  const mapCenter = useMemo(() => {
+  // Initial position değiştiğinde güncelle
+  useEffect(() => {
+    if (latitude && longitude) {
+      setSelectedPosition({ lat: latitude, lng: longitude });
+    }
+  }, [latitude, longitude]);
+
+  // Harita merkezi
+  const mapCenter = useMemo((): [number, number] => {
     if (selectedPosition) {
-      return selectedPosition;
+      return [selectedPosition.lat, selectedPosition.lng];
     }
     if (latitude && longitude) {
-      return { lat: latitude, lng: longitude };
+      return [latitude, longitude];
     }
-    return { lat: 39.9334, lng: 32.8597 }; // Türkiye merkezi
+    return [39.9334, 32.8597]; // Türkiye merkezi (Ankara)
   }, [selectedPosition, latitude, longitude]);
 
-  // Haritaya tıklandığında konum seç
-  const handleMapClick = useCallback(
-    (e: google.maps.MapMouseEvent) => {
-      if (e.latLng) {
-        const lat = e.latLng.lat();
-        const lng = e.latLng.lng();
-        setSelectedPosition({ lat, lng });
-        onLocationSelect(lat, lng);
-      }
-    },
-    [onLocationSelect]
-  );
-
-  // Harita container stilleri
-  const mapContainerStyle = {
-    width: '100%',
-    height: height,
-  };
-
-  const mapOptions = {
-    disableDefaultUI: false,
-    zoomControl: true,
-    streetViewControl: false,
-    mapTypeControl: true,
-    fullscreenControl: true,
-    clickableIcons: false,
-  };
-
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
-
-  if (!apiKey) {
-    return (
-      <div className="w-full bg-yellow-50 border border-yellow-200 rounded-md p-4">
-        <p className="text-yellow-800">
-          Google Maps API key bulunamadı. Lütfen .env dosyasına VITE_GOOGLE_MAPS_API_KEY ekleyin.
-        </p>
-      </div>
-    );
-  }
+  const zoom = selectedPosition ? 15 : 6;
 
   return (
     <div className="w-full">
       <div className="mb-2 text-sm text-gray-600">
         Haritaya tıklayarak konum seçin
       </div>
-      <LoadScript googleMapsApiKey={apiKey}>
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
+      <div style={{ height, width: '100%' }} className="rounded-lg overflow-hidden border border-gray-300">
+        <MapContainer
           center={mapCenter}
-          zoom={selectedPosition ? 15 : 6}
-          options={mapOptions}
-          onClick={handleMapClick}
+          zoom={zoom}
+          style={{ height: '100%', width: '100%' }}
+          scrollWheelZoom={true}
         >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <ChangeView center={mapCenter} zoom={zoom} />
+          <MapClickHandler
+            onLocationSelect={onLocationSelect}
+            setPosition={setSelectedPosition}
+          />
           {selectedPosition && (
             <Marker
-              position={selectedPosition}
-              title="Seçilen konum"
+              position={[selectedPosition.lat, selectedPosition.lng]}
               draggable={true}
-              onDragEnd={(e) => {
-                if (e.latLng) {
-                  const lat = e.latLng.lat();
-                  const lng = e.latLng.lng();
-                  setSelectedPosition({ lat, lng });
-                  onLocationSelect(lat, lng);
-                }
+              eventHandlers={{
+                dragend: (e) => {
+                  const marker = e.target;
+                  const position = marker.getLatLng();
+                  setSelectedPosition({ lat: position.lat, lng: position.lng });
+                  onLocationSelect(position.lat, position.lng);
+                },
               }}
             />
           )}
-        </GoogleMap>
-      </LoadScript>
+        </MapContainer>
+      </div>
       {selectedPosition && (
         <div className="mt-2 text-sm text-gray-600">
           Seçilen konum: {selectedPosition.lat.toFixed(6)}, {selectedPosition.lng.toFixed(6)}
@@ -115,4 +129,3 @@ const LocationPicker: React.FC<LocationPickerProps> = ({
 };
 
 export default LocationPicker;
-

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { API_BASE_URL } from '../config';
 
 /**
  * Auth Context - Kullanıcı kimlik doğrulama ve yetkilendirme state yönetimi
@@ -30,7 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Axios instance - API istekleri için
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: API_BASE_URL,
 });
 
 // Request interceptor - Her istekte token ekle
@@ -69,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const { accessToken, userId, username, role } = response.data;
 
       const userData: User = { id: userId, username, email, role };
-      
+
       setToken(accessToken);
       setUser(userData);
       localStorage.setItem('token', accessToken);
@@ -104,7 +105,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const { accessToken, userId, username: registeredUsername, role } = response.data;
 
       const userData: User = { id: userId, username: registeredUsername, email, role };
-      
+
       setToken(accessToken);
       setUser(userData);
       localStorage.setItem('token', accessToken);

@@ -1,35 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { storiesApi, categoriesApi, uploadApi } from '../services/api';
-import { Story, Category } from '../types';
-import LocationPicker from '../components/LocationPicker';
+import { storiesApi } from '../services/api';
+import { Story } from '../types';
+import { StoryForm, StoryFormData } from '../components/stories';
 import toast from 'react-hot-toast';
 
 /**
  * Edit Story Page Component - Hikaye düzenleme sayfası
- * Mevcut hikaye bilgilerini günceller
+ * StoryForm bileşenini kullanarak kod tekrarını önler
  */
 const EditStory: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [, setStory] = useState<Story | null>(null);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [locationName, setLocationName] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [isPublished, setIsPublished] = useState(true);
+  const [story, setStory] = useState<Story | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingStory, setIsLoadingStory] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (id) {
       loadStory();
-      loadCategories();
     }
   }, [id]);
 
@@ -38,15 +27,7 @@ const EditStory: React.FC = () => {
       setIsLoadingStory(true);
       const storyData = await storiesApi.getById(id!);
       setStory(storyData);
-      setTitle(storyData.title);
-      setContent(storyData.content);
-      setLatitude(storyData.latitude?.toString() || '');
-      setLongitude(storyData.longitude?.toString() || '');
-      setLocationName(storyData.locationName || '');
-      setPhotos(storyData.photos || []);
-      setIsPublished(storyData.isPublished);
-      setSelectedCategories(storyData.categories?.map((cat) => cat.id) || []);
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Hikaye yüklenirken bir hata oluştu');
       navigate('/my-stories');
     } finally {
@@ -54,74 +35,36 @@ const EditStory: React.FC = () => {
     }
   };
 
-  const loadCategories = async () => {
-    try {
-      const categoriesData = await categoriesApi.getAll();
-      setCategories(categoriesData);
-    } catch (error: any) {
-      toast.error('Kategoriler yüklenirken bir hata oluştu');
-    }
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    setIsUploading(true);
-    try {
-      const uploadPromises = Array.from(files).map((file) => uploadApi.uploadPhoto(file));
-      const results = await Promise.all(uploadPromises);
-      const newPhotos = results.map((result) => result.url);
-      setPhotos([...photos, ...newPhotos]);
-      toast.success('Fotoğraflar yüklendi');
-    } catch (error: any) {
-      toast.error('Fotoğraf yüklenirken bir hata oluştu');
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!title.trim() || !content.trim()) {
-      toast.error('Başlık ve içerik zorunludur');
-      return;
-    }
-
+  const handleSubmit = async (data: StoryFormData) => {
     setIsLoading(true);
     try {
       await storiesApi.update(id!, {
-        title,
-        content,
-        latitude: latitude ? parseFloat(latitude) : undefined,
-        longitude: longitude ? parseFloat(longitude) : undefined,
-        locationName: locationName || undefined,
-        photos: photos.length > 0 ? photos : undefined,
-        categoryIds: selectedCategories,
-        isPublished,
+        title: data.title,
+        content: data.content,
+        latitude: data.latitude ? parseFloat(data.latitude) : undefined,
+        longitude: data.longitude ? parseFloat(data.longitude) : undefined,
+        locationName: data.locationName || undefined,
+        photos: data.photos.length > 0 ? data.photos : undefined,
+        categoryIds: data.selectedCategories,
+        isPublished: data.isPublished,
       });
       toast.success('Hikaye başarıyla güncellendi');
       navigate('/my-stories');
-    } catch (error: any) {
+    } catch (error) {
       toast.error('Hikaye güncellenirken bir hata oluştu');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCategoryToggle = (categoryId: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
-    );
+  const handleCancel = () => {
+    navigate('/my-stories');
   };
 
   if (isLoadingStory) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">Yükleniyor...</div>
+        <div className="text-center text-gray-500">Yükleniyor...</div>
       </div>
     );
   }
@@ -129,189 +72,15 @@ const EditStory: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Hikaye Düzenle</h1>
-
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 space-y-6">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-            Başlık *
-          </label>
-          <input
-            id="title"
-            type="text"
-            required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Hikaye başlığı"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-            İçerik *
-          </label>
-          <textarea
-            id="content"
-            required
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={10}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Hikaye içeriği"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Konum Seçimi
-          </label>
-          <div className="mb-4">
-            <LocationPicker
-              latitude={latitude ? parseFloat(latitude) : undefined}
-              longitude={longitude ? parseFloat(longitude) : undefined}
-              onLocationSelect={(lat, lng) => {
-                setLatitude(lat.toString());
-                setLongitude(lng.toString());
-              }}
-              height="400px"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-2">
-                Enlem (Latitude)
-              </label>
-              <input
-                id="latitude"
-                type="number"
-                step="any"
-                value={latitude}
-                onChange={(e) => setLatitude(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="41.0082"
-              />
-            </div>
-            <div>
-              <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-2">
-                Boylam (Longitude)
-              </label>
-              <input
-                id="longitude"
-                type="number"
-                step="any"
-                value={longitude}
-                onChange={(e) => setLongitude(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="28.9784"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="locationName" className="block text-sm font-medium text-gray-700 mb-2">
-            Lokasyon Adı
-          </label>
-          <input
-            id="locationName"
-            type="text"
-            value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="İstanbul, Kadıköy"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Kategoriler
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                onClick={() => handleCategoryToggle(category.id)}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  selectedCategories.includes(category.id)
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Fotoğraflar
-          </label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleFileUpload}
-            disabled={isUploading}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {isUploading && <p className="text-sm text-gray-500 mt-2">Yükleniyor...</p>}
-          {photos.length > 0 && (
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {photos.map((photo, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={`http://localhost:3000${photo}`}
-                    alt={`Fotoğraf ${index + 1}`}
-                    className="w-full h-32 object-cover rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setPhotos(photos.filter((_, i) => i !== index))}
-                    className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center">
-          <input
-            id="isPublished"
-            type="checkbox"
-            checked={isPublished}
-            onChange={(e) => setIsPublished(e.target.checked)}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-          />
-          <label htmlFor="isPublished" className="ml-2 block text-sm text-gray-900">
-            Yayınla
-          </label>
-        </div>
-
-        <div className="flex space-x-4">
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isLoading ? 'Güncelleniyor...' : 'Güncelle'}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/my-stories')}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-          >
-            İptal
-          </button>
-        </div>
-      </form>
+      <StoryForm
+        mode="edit"
+        initialData={story || undefined}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        isSubmitting={isLoading}
+      />
     </div>
   );
 };
 
 export default EditStory;
-

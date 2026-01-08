@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Story } from '../entities/story.entity';
+import { StoryLike } from '../entities/story-like.entity';
 import { Category } from '../entities/category.entity';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
@@ -16,9 +17,11 @@ export class StoriesService {
   constructor(
     @InjectRepository(Story)
     private storiesRepository: Repository<Story>,
+    @InjectRepository(StoryLike)
+    private storyLikesRepository: Repository<StoryLike>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-  ) {}
+  ) { }
 
   /**
    * Yeni hikaye oluşturur
@@ -129,18 +132,85 @@ export class StoriesService {
 
   /**
    * Hikayeyi beğenir veya beğenmez
-   * Like/dislike sayısını artırır
+   * Her kullanıcı bir hikayeye sadece bir kez tepki verebilir
+   * Aynı tepkiyi tekrar verirse geri alınır (toggle)
+   * Farklı tepki verirse değiştirilir
    */
-  async likeStory(id: string, likeStoryDto: LikeStoryDto): Promise<Story> {
+  async likeStory(id: string, likeStoryDto: LikeStoryDto, userId: string): Promise<{ story: Story; userAction: string | null }> {
     const story = await this.findOne(id);
 
-    if (likeStoryDto.action === 'like') {
-      story.likes += 1;
-    } else {
-      story.dislikes += 1;
-    }
+    // Kullanıcının mevcut tepkisini kontrol et
+    const existingLike = await this.storyLikesRepository.findOne({
+      where: { storyId: id, userId },
+    });
 
-    return this.storiesRepository.save(story);
+    if (existingLike) {
+      // Aynı tepki verilmişse geri al (toggle)
+      if (existingLike.action === likeStoryDto.action) {
+        // Sayıyı azalt
+        if (existingLike.action === 'like') {
+          story.likes = Math.max(0, story.likes - 1);
+        } else {
+          story.dislikes = Math.max(0, story.dislikes - 1);
+        }
+
+        // Like kaydını sil
+        await this.storyLikesRepository.remove(existingLike);
+        await this.storiesRepository.save(story);
+
+        return { story, userAction: null };
+      } else {
+        // Farklı tepki verilmişse değiştir
+        // Eski tepkiyi azalt
+        if (existingLike.action === 'like') {
+          story.likes = Math.max(0, story.likes - 1);
+        } else {
+          story.dislikes = Math.max(0, story.dislikes - 1);
+        }
+
+        // Yeni tepkiyi artır
+        if (likeStoryDto.action === 'like') {
+          story.likes += 1;
+        } else {
+          story.dislikes += 1;
+        }
+
+        // Like kaydını güncelle
+        existingLike.action = likeStoryDto.action;
+        await this.storyLikesRepository.save(existingLike);
+        await this.storiesRepository.save(story);
+
+        return { story, userAction: likeStoryDto.action };
+      }
+    } else {
+      // İlk kez tepki veriliyor
+      const newLike = this.storyLikesRepository.create({
+        userId,
+        storyId: id,
+        action: likeStoryDto.action,
+      });
+
+      if (likeStoryDto.action === 'like') {
+        story.likes += 1;
+      } else {
+        story.dislikes += 1;
+      }
+
+      await this.storyLikesRepository.save(newLike);
+      await this.storiesRepository.save(story);
+
+      return { story, userAction: likeStoryDto.action };
+    }
+  }
+
+  /**
+   * Kullanıcının bir hikayeye verdiği tepkiyi getirir
+   */
+  async getUserLikeStatus(storyId: string, userId: string): Promise<string | null> {
+    const like = await this.storyLikesRepository.findOne({
+      where: { storyId, userId },
+    });
+    return like ? like.action : null;
   }
 }
 

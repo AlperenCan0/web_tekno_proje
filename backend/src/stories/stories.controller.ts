@@ -26,7 +26,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 @ApiTags('Stories')
 @Controller('stories')
 export class StoriesController {
-  constructor(private readonly storiesService: StoriesService) {}
+  constructor(private readonly storiesService: StoriesService) { }
 
   /**
    * POST /stories - Yeni hikaye oluşturur
@@ -114,13 +114,20 @@ export class StoriesController {
 
   /**
    * POST /stories/:id/like - Hikayeyi beğenir veya beğenmez
-   * Herkes hikayeleri beğenebilir/beğenmeyebilir
+   * Giriş yapmış kullanıcılar beğenebilir/beğenmeyebilir (her kullanıcı bir kez)
    */
   @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Hikayeyi beğenir veya beğenmez' })
   @ApiResponse({ status: 200, description: 'Beğeni işlemi başarılı' })
-  likeStory(@Param('id') id: string, @Body() likeStoryDto: LikeStoryDto) {
-    return this.storiesService.likeStory(id, likeStoryDto);
+  @ApiResponse({ status: 400, description: 'Bu hikayeyi zaten beğendiniz/beğenmediniz' })
+  likeStory(
+    @Param('id') id: string,
+    @Body() likeStoryDto: LikeStoryDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.storiesService.likeStory(id, likeStoryDto, user.id);
   }
 }
 

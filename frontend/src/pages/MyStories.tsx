@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { storiesApi } from '../services/api';
 import { Story } from '../types';
+import { getPhotoUrl } from '../config';
 import toast from 'react-hot-toast';
 
 /**
@@ -81,7 +82,7 @@ const MyStories: React.FC = () => {
             >
               {story.photos && story.photos.length > 0 && (
                 <img
-                  src={`http://localhost:3000${story.photos[0]}`}
+                  src={getPhotoUrl(story.photos[0])}
                   alt={story.title}
                   className="w-full h-48 object-cover"
                 />
