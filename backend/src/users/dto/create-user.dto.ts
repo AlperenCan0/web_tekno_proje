@@ -1,10 +1,6 @@
 import { IsEmail, IsString, MinLength, IsOptional, IsEnum, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * Kullanıcı oluşturma DTO'su
- * CREATE endpoint'inde kullanılır
- */
 export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
@@ -45,4 +41,3 @@ export class CreateUserDto {
   @IsString()
   avatar?: string;
 }
-

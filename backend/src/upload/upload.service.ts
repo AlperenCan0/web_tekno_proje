@@ -12,7 +12,6 @@ export class UploadService {
 
     async saveFile(file: Express.Multer.File): Promise<FileEntity> {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        // get extension
         const originalName = file.originalname;
         const ext = originalName.substring(originalName.lastIndexOf('.'));
         const filename = `photo-${uniqueSuffix}${ext}`;

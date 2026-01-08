@@ -17,19 +17,11 @@ import { LikeCommentDto } from './dto/like-comment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-/**
- * Comments Controller - Yorum yönetimi endpoint'lerini yönetir
- * CRUD operasyonları ve like/dislike işlemlerini sağlar
- */
 @ApiTags('Comments')
 @Controller('comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
-  /**
-   * POST /comments - Yeni yorum oluşturur
-   * Giriş yapmış kullanıcılar yorum yapabilir
-   */
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -39,10 +31,6 @@ export class CommentsController {
     return this.commentsService.create(createCommentDto, user.id);
   }
 
-  /**
-   * GET /comments - Tüm yorumları listeler
-   * Herkes yorumları görebilir
-   */
   @Get()
   @ApiOperation({ summary: 'Tüm yorumları listeler' })
   @ApiQuery({ name: 'storyId', required: false, type: String, description: 'Hikaye ID\'sine göre filtrele' })
@@ -54,11 +42,6 @@ export class CommentsController {
     return this.commentsService.findAll();
   }
 
-  /**
-   * GET /comments/:id/like-status - Kullanıcının bu yoruma verdiği tepkiyi getirir
-   * Giriş yapmış kullanıcıların mevcut tepkisini kontrol eder
-   * Not: Bu route findOne'dan önce tanımlanmalı
-   */
   @Get(':id/like-status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -69,10 +52,6 @@ export class CommentsController {
     return { userAction: action };
   }
 
-  /**
-   * GET /comments/:id - ID'ye göre yorum getirir
-   * Herkes yorum detaylarını görebilir
-   */
   @Get(':id')
   @ApiOperation({ summary: 'ID\'ye göre yorum getirir' })
   @ApiResponse({ status: 200, description: 'Yorum detayları' })
@@ -81,10 +60,6 @@ export class CommentsController {
     return this.commentsService.findOne(id);
   }
 
-  /**
-   * PATCH /comments/:id - Yorum bilgilerini günceller
-   * Sadece yorum sahibi veya Admin/SuperAdmin güncelleyebilir
-   */
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -99,10 +74,6 @@ export class CommentsController {
     return this.commentsService.update(id, updateCommentDto, user.id, user.role);
   }
 
-  /**
-   * DELETE /comments/:id - Yorumu siler
-   * Sadece yorum sahibi veya Admin/SuperAdmin silebilir
-   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -113,10 +84,6 @@ export class CommentsController {
     return this.commentsService.remove(id, user.id, user.role);
   }
 
-  /**
-   * POST /comments/:id/like - Yorumu beğenir veya beğenmez
-   * Giriş yapmış kullanıcılar yorumları beğenebilir/beğenmeyebilir (her kullanıcı bir kez)
-   */
   @Post(':id/like')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -131,4 +98,3 @@ export class CommentsController {
     return this.commentsService.likeComment(id, likeCommentDto, user.id);
   }
 }
-

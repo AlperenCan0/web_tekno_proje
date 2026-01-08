@@ -10,13 +10,8 @@ import {
 import { User } from './user.entity';
 import { Comment } from './comment.entity';
 
-/**
- * CommentLike Entity - Yorum beğenilerini kullanıcı bazında takip eder
- * Her kullanıcı bir yorumu sadece bir kez beğenebilir/beğenmeyebilir
- * Unique constraint ile çoklu like/dislike engellenir
- */
 @Entity('comment_likes')
-@Unique(['userId', 'commentId']) // Bir kullanıcı bir yoruma sadece bir kez tepki verebilir
+@Unique(['userId', 'commentId'])
 export class CommentLike {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -33,14 +28,11 @@ export class CommentLike {
   @CreateDateColumn()
   createdAt: Date;
 
-  // Many-to-One ilişki: CommentLike -> User
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  // Many-to-One ilişki: CommentLike -> Comment
   @ManyToOne(() => Comment, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'commentId' })
   comment: Comment;
 }
-

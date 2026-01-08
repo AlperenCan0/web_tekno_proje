@@ -1,18 +1,10 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-/**
- * Base Service - Ortak servis metodları için base class
- * Yetki kontrolü ve entity bulma işlemlerini reusable hale getirir
- */
 export abstract class BaseService<T extends { id: string; authorId?: string }> {
   constructor() {
-    // Base constructor - child class'lar için gerekli
   }
-  /**
-   * Entity'nin sahibi olup olmadığını kontrol eder
-   * User rolü için sahiplik kontrolü yapar, Admin/SuperAdmin için kontrol yapmaz
-   */
+
   protected checkOwnership(
     entity: T,
     userId: string,
@@ -24,9 +16,6 @@ export abstract class BaseService<T extends { id: string; authorId?: string }> {
     }
   }
 
-  /**
-   * Entity'yi bulur veya NotFoundException fırlatır
-   */
   protected async findOneOrFail(
     repository: Repository<T>,
     id: string,
@@ -45,4 +34,3 @@ export abstract class BaseService<T extends { id: string; authorId?: string }> {
     return entity;
   }
 }
-

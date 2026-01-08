@@ -1,10 +1,6 @@
 import { IsString, IsOptional, IsNumber, IsArray, IsBoolean, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * Hikaye oluşturma DTO'su
- * CREATE endpoint'inde kullanılır
- */
 export class CreateStoryDto {
   @ApiProperty({ example: 'İstanbul Boğazı Hikayesi', description: 'Hikaye başlığı' })
   @IsString()
@@ -48,4 +44,3 @@ export class CreateStoryDto {
   @IsBoolean()
   isPublished?: boolean;
 }
-

@@ -10,13 +10,8 @@ import {
 import { User } from './user.entity';
 import { Story } from './story.entity';
 
-/**
- * StoryLike Entity - Hikaye beğenilerini kullanıcı bazında takip eder
- * Her kullanıcı bir hikayeyi sadece bir kez beğenebilir/beğenmeyebilir
- * Unique constraint ile çoklu like/dislike engellenir
- */
 @Entity('story_likes')
-@Unique(['userId', 'storyId']) // Bir kullanıcı bir hikayeye sadece bir kez tepki verebilir
+@Unique(['userId', 'storyId'])
 export class StoryLike {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -33,12 +28,10 @@ export class StoryLike {
     @CreateDateColumn()
     createdAt: Date;
 
-    // Many-to-One ilişki: StoryLike -> User
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    // Many-to-One ilişki: StoryLike -> Story
     @ManyToOne(() => Story, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'storyId' })
     story: Story;

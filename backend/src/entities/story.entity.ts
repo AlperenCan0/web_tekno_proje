@@ -14,12 +14,6 @@ import { User } from './user.entity';
 import { Category } from './category.entity';
 import { Comment } from './comment.entity';
 
-/**
- * Story Entity - Yerel hikayeleri tutar
- * Many-to-One ilişki: User (author) ile
- * Many-to-Many ilişki: Category ile
- * One-to-Many ilişki: Comment ile
- */
 @Entity('stories')
 export class Story {
   @PrimaryGeneratedColumn('uuid')
@@ -32,22 +26,22 @@ export class Story {
   content: string;
 
   @Column('decimal', { precision: 10, scale: 8, nullable: true })
-  latitude: number; // Google Maps koordinatı - enlem
+  latitude: number;
 
   @Column('decimal', { precision: 11, scale: 8, nullable: true })
-  longitude: number; // Google Maps koordinatı - boylam
+  longitude: number;
 
   @Column({ nullable: true })
-  locationName: string; // Lokasyon adı (örn: "İstanbul, Kadıköy")
+  locationName: string;
 
   @Column({ type: 'simple-array', nullable: true })
-  photos: string[]; // Fotoğraf URL'leri dizisi
+  photos: string[];
 
   @Column({ default: 0 })
-  likes: number; // Beğeni sayısı
+  likes: number;
 
   @Column({ default: 0 })
-  dislikes: number; // Beğenmeme sayısı
+  dislikes: number;
 
   @Column({ default: true })
   isPublished: boolean;
@@ -58,7 +52,6 @@ export class Story {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Many-to-One ilişki: Story -> User (author)
   @ManyToOne(() => User, (user) => user.stories, { onDelete: 'CASCADE' })
   @JoinColumn()
   author: User;
@@ -66,7 +59,6 @@ export class Story {
   @Column()
   authorId: string;
 
-  // Many-to-Many ilişki: Story -> Category
   @ManyToMany(() => Category, (category) => category.stories)
   @JoinTable({
     name: 'story_categories',
@@ -75,8 +67,6 @@ export class Story {
   })
   categories: Category[];
 
-  // One-to-Many ilişki: Story -> Comment
   @OneToMany(() => Comment, (comment) => comment.story, { cascade: true })
   comments: Comment[];
 }
-

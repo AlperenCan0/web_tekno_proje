@@ -10,18 +10,13 @@ import { CategoriesModule } from './categories/categories.module';
 import { CommentsModule } from './comments/comments.module';
 import { UploadModule } from './upload/upload.module';
 import { User, Profile, Story, StoryLike, Category, Comment, CommentLike } from './entities';
+import { FileEntity } from './upload/file.entity';
 
-/**
- * Ana uygulama modülü
- * Tüm modülleri ve veritabanı bağlantısını yapılandırır
- */
 @Module({
   imports: [
-    // Environment variables yapılandırması
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // PostgreSQL veritabanı bağlantısı
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
@@ -29,11 +24,10 @@ import { User, Profile, Story, StoryLike, Category, Comment, CommentLike } from 
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_DATABASE || 'local_stories',
-      entities: [User, Profile, Story, StoryLike, Category, Comment, CommentLike],
-      synchronize: process.env.NODE_ENV !== 'production', // Production'da false olmalı
-      logging: false, // Logging kapalı - gereksiz log'ları önlemek için
+      entities: [User, Profile, Story, StoryLike, Category, Comment, CommentLike, FileEntity],
+      synchronize: process.env.NODE_ENV !== 'production',
+      logging: false,
     }),
-    // Feature modülleri
     AuthModule,
     UsersModule,
     StoriesModule,
@@ -45,4 +39,3 @@ import { User, Profile, Story, StoryLike, Category, Comment, CommentLike } from 
   providers: [AppService],
 })
 export class AppModule { }
-

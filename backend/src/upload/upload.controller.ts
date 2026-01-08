@@ -17,32 +17,23 @@ import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UploadService } from './upload.service';
 
-/**
- * Upload Controller - Dosya yükleme endpoint'lerini yönetir
- * Fotoğraf yükleme işlemlerini gerçekleştirir
- */
 @Controller('upload')
 @ApiTags('Upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) { }
-  /**
-   * POST /upload/photo - Fotoğraf yükler
-   * Giriş yapmış kullanıcılar fotoğraf yükleyebilir
-   * Yüklenen dosya /uploads klasörüne kaydedilir
-   */
+
   @Post('photo')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
       fileFilter: (req, file, cb) => {
-        // Sadece resim dosyalarına izin ver
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
           return cb(new BadRequestException('Sadece resim dosyaları yüklenebilir (jpg, jpeg, png, gif)'), false);
         }
         cb(null, true);
       },
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
+        fileSize: 5 * 1024 * 1024,
       },
     }),
   )
@@ -92,4 +83,3 @@ export class UploadController {
     res.send(file.data);
   }
 }
-

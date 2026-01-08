@@ -10,10 +10,6 @@ import {
 import { User } from './user.entity';
 import { Story } from './story.entity';
 
-/**
- * Comment Entity - Hikayelere yapılan yorumları tutar
- * Many-to-One ilişki: User (author) ve Story ile
- */
 @Entity('comments')
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
@@ -34,7 +30,6 @@ export class Comment {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Many-to-One ilişki: Comment -> User (author)
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn()
   author: User;
@@ -42,7 +37,6 @@ export class Comment {
   @Column()
   authorId: string;
 
-  // Many-to-One ilişki: Comment -> Story
   @ManyToOne(() => Story, (story) => story.comments, { onDelete: 'CASCADE' })
   @JoinColumn()
   story: Story;
@@ -50,4 +44,3 @@ export class Comment {
   @Column()
   storyId: string;
 }
-

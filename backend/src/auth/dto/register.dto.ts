@@ -1,10 +1,6 @@
 import { IsEmail, IsString, MinLength, IsOptional, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * Kullanıcı kayıt DTO'su
- * Register endpoint'inde kullanılır
- */
 export class RegisterDto {
   @ApiProperty({ example: 'user@example.com', description: 'Kullanıcı e-posta adresi' })
   @IsEmail()
@@ -30,4 +26,3 @@ export class RegisterDto {
   @IsString()
   lastName?: string;
 }
-

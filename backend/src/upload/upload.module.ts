@@ -4,10 +4,6 @@ import { UploadController } from './upload.controller';
 import { UploadService } from './upload.service';
 import { FileEntity } from './file.entity';
 
-/**
- * Upload Module - Dosya yükleme modülü
- * Fotoğraf yükleme işlemlerini yönetir
- */
 @Module({
   imports: [TypeOrmModule.forFeature([FileEntity])],
   controllers: [UploadController],
@@ -15,4 +11,3 @@ import { FileEntity } from './file.entity';
   exports: [UploadService],
 })
 export class UploadModule { }
-

@@ -9,10 +9,6 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
-/**
- * Profile Entity - Kullanıcı detaylı profil bilgilerini tutar
- * One-to-One ilişki: User ile
- */
 @Entity('profiles')
 export class Profile {
   @PrimaryGeneratedColumn('uuid')
@@ -28,7 +24,7 @@ export class Profile {
   bio: string;
 
   @Column({ nullable: true })
-  avatar: string; // Avatar fotoğrafı URL'i
+  avatar: string;
 
   @Column({ nullable: true })
   phone: string;
@@ -42,7 +38,6 @@ export class Profile {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // One-to-One ilişki: Profile -> User
   @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
@@ -50,4 +45,3 @@ export class Profile {
   @Column()
   userId: string;
 }
-

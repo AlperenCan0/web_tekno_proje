@@ -1,10 +1,6 @@
 import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * Admin oluşturma DTO'su
- * İlk admin oluşturma endpoint'inde kullanılır
- */
 export class CreateAdminDto {
   @ApiProperty({ example: 'admin@example.com', description: 'Admin e-posta adresi' })
   @IsEmail()
@@ -30,4 +26,3 @@ export class CreateAdminDto {
   @IsString()
   lastName?: string;
 }
-

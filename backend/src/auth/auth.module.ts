@@ -9,10 +9,6 @@ import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { User } from '../entities/user.entity';
 
-/**
- * Auth Module - Kimlik doğrulama modülü
- * JWT stratejisi ve auth servislerini yapılandırır
- */
 @Module({
   imports: [
     UsersModule,
@@ -33,5 +29,4 @@ import { User } from '../entities/user.entity';
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
 })
-export class AuthModule {}
-
+export class AuthModule { }

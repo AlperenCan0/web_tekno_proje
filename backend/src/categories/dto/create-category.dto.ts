@@ -1,10 +1,6 @@
 import { IsString, IsOptional, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * Kategori oluşturma DTO'su
- * CREATE endpoint'inde kullanılır
- */
 export class CreateCategoryDto {
   @ApiProperty({ example: 'Tarihi Yerler', description: 'Kategori adı' })
   @IsString()
@@ -21,4 +17,3 @@ export class CreateCategoryDto {
   @IsString()
   icon?: string;
 }
-

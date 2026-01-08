@@ -6,19 +6,11 @@ import { LoginDto } from './dto/login.dto';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 
-/**
- * Auth Controller - Kimlik doğrulama endpoint'lerini yönetir
- * Login ve Register işlemlerini sağlar
- */
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  /**
-   * POST /auth/register - Yeni kullanıcı kaydı oluşturur
-   * E-posta, kullanıcı adı ve şifre ile kayıt yapar, JWT token döner
-   */
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Yeni kullanıcı kaydı oluşturur' })
@@ -28,10 +20,6 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  /**
-   * POST /auth/login - Kullanıcı girişi yapar
-   * E-posta ve şifre ile giriş yapar, JWT token döner
-   */
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Kullanıcı girişi yapar' })
@@ -41,11 +29,6 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  /**
-   * POST /auth/create-admin - İlk admin kullanıcısını oluşturur
-   * Sadece hiç admin yoksa çalışır, public endpoint
-   * Normal login ekranından giriş yapılabilir
-   */
   @Post('create-admin')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'İlk admin kullanıcısını oluşturur (Sadece hiç admin yoksa)' })
@@ -56,4 +39,3 @@ export class AuthController {
     return this.authService.createFirstAdmin(createAdminDto);
   }
 }
-

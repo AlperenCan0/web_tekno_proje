@@ -16,19 +16,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 
-/**
- * Categories Controller - Kategori yönetimi endpoint'lerini yönetir
- * CRUD operasyonları sağlar
- */
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) { }
 
-  /**
-   * POST /categories - Yeni kategori oluşturur
-   * Sadece Admin ve SuperAdmin erişebilir
-   */
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin', 'SuperAdmin')
@@ -39,10 +31,6 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto);
   }
 
-  /**
-   * GET /categories - Tüm kategorileri listeler
-   * Herkes kategorileri görebilir
-   */
   @Get()
   @ApiOperation({ summary: 'Tüm kategorileri listeler' })
   @ApiResponse({ status: 200, description: 'Kategori listesi' })
@@ -50,10 +38,6 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
-  /**
-   * GET /categories/:id - ID'ye göre kategori getirir
-   * Herkes kategori detaylarını görebilir
-   */
   @Get(':id')
   @ApiOperation({ summary: 'ID\'ye göre kategori getirir' })
   @ApiResponse({ status: 200, description: 'Kategori detayları' })
@@ -62,10 +46,6 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
-  /**
-   * PATCH /categories/:id - Kategori bilgilerini günceller
-   * Sadece Admin ve SuperAdmin erişebilir
-   */
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin', 'SuperAdmin')
@@ -76,10 +56,6 @@ export class CategoriesController {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
-  /**
-   * DELETE /categories/:id - Kategoriyi siler
-   * Sadece Admin ve SuperAdmin erişebilir
-   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('Admin', 'SuperAdmin')
@@ -90,4 +66,3 @@ export class CategoriesController {
     return this.categoriesService.remove(id);
   }
 }
-

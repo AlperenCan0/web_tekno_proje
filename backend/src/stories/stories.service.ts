@@ -9,10 +9,6 @@ import { CreateStoryDto } from './dto/create-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { LikeStoryDto } from './dto/like-story.dto';
 
-/**
- * Stories Service - Hikaye işlemlerini yönetir
- * CRUD operasyonları, like/dislike ve kategori yönetimi işlemlerini gerçekleştirir
- */
 @Injectable()
 export class StoriesService extends BaseService<Story> {
   constructor(
@@ -26,14 +22,9 @@ export class StoriesService extends BaseService<Story> {
     super();
   }
 
-  /**
-   * Yeni hikaye oluşturur
-   * Kategorileri ilişkilendirir
-   */
   async create(createStoryDto: CreateStoryDto, authorId: string): Promise<Story> {
     const { categoryIds, ...storyData } = createStoryDto;
 
-    // Debug: Fotoğrafların gelip gelmediğini kontrol et
     console.log('📸 Story oluşturuluyor - Photos:', createStoryDto.photos);
 
     const story = this.storiesRepository.create({
@@ -41,7 +32,6 @@ export class StoriesService extends BaseService<Story> {
       authorId,
     });
 
-    // Kategorileri ilişkilendir
     if (categoryIds && categoryIds.length > 0) {
       const categories = await this.categoriesRepository.findBy({
         id: In(categoryIds),
@@ -52,10 +42,6 @@ export class StoriesService extends BaseService<Story> {
     return this.storiesRepository.save(story);
   }
 
-  /**
-   * Tüm hikayeleri getirir (yayınlanmış olanlar)
-   * İlişkili verilerle birlikte (author, categories, comments)
-   */
   async findAll(publishedOnly: boolean = true): Promise<Story[]> {
     const where: any = {};
     if (publishedOnly) {
@@ -69,9 +55,6 @@ export class StoriesService extends BaseService<Story> {
     });
   }
 
-  /**
-   * ID'ye göre hikaye getirir
-   */
   async findOne(id: string): Promise<Story> {
     return this.findOneOrFail(
       this.storiesRepository,
@@ -81,9 +64,6 @@ export class StoriesService extends BaseService<Story> {
     );
   }
 
-  /**
-   * Kullanıcının hikayelerini getirir
-   */
   async findByAuthor(authorId: string): Promise<Story[]> {
     return this.storiesRepository.find({
       where: { authorId },
@@ -92,17 +72,11 @@ export class StoriesService extends BaseService<Story> {
     });
   }
 
-  /**
-   * Hikaye bilgilerini günceller
-   * Sadece hikaye sahibi veya Admin/SuperAdmin güncelleyebilir
-   */
   async update(id: string, updateStoryDto: UpdateStoryDto, userId: string, userRole: string): Promise<Story> {
     const story = await this.findOne(id);
 
-    // Yetki kontrolü
     this.checkOwnership(story, userId, userRole, 'Bu hikayeyi güncelleme yetkiniz yok');
 
-    // Kategorileri güncelle
     if (updateStoryDto.categoryIds) {
       const categories = await this.categoriesRepository.findBy({
         id: In(updateStoryDto.categoryIds),
@@ -115,65 +89,46 @@ export class StoriesService extends BaseService<Story> {
     return this.storiesRepository.save(story);
   }
 
-  /**
-   * Hikayeyi siler
-   * Sadece hikaye sahibi veya Admin/SuperAdmin silebilir
-   */
   async remove(id: string, userId: string, userRole: string): Promise<void> {
     const story = await this.findOne(id);
 
-    // Yetki kontrolü
     this.checkOwnership(story, userId, userRole, 'Bu hikayeyi silme yetkiniz yok');
 
     await this.storiesRepository.remove(story);
   }
 
-  /**
-   * Hikayeyi beğenir veya beğenmez
-   * Her kullanıcı bir hikayeye sadece bir kez tepki verebilir
-   * Aynı tepkiyi tekrar verirse geri alınır (toggle)
-   * Farklı tepki verirse değiştirilir
-   */
   async likeStory(id: string, likeStoryDto: LikeStoryDto, userId: string): Promise<{ story: Story; userAction: string | null }> {
     const story = await this.findOne(id);
 
-    // Kullanıcının mevcut tepkisini kontrol et
     const existingLike = await this.storyLikesRepository.findOne({
       where: { storyId: id, userId },
     });
 
     if (existingLike) {
-      // Aynı tepki verilmişse geri al (toggle)
       if (existingLike.action === likeStoryDto.action) {
-        // Sayıyı azalt
         if (existingLike.action === 'like') {
           story.likes = Math.max(0, story.likes - 1);
         } else {
           story.dislikes = Math.max(0, story.dislikes - 1);
         }
 
-        // Like kaydını sil
         await this.storyLikesRepository.remove(existingLike);
         await this.storiesRepository.save(story);
 
         return { story, userAction: null };
       } else {
-        // Farklı tepki verilmişse değiştir
-        // Eski tepkiyi azalt
         if (existingLike.action === 'like') {
           story.likes = Math.max(0, story.likes - 1);
         } else {
           story.dislikes = Math.max(0, story.dislikes - 1);
         }
 
-        // Yeni tepkiyi artır
         if (likeStoryDto.action === 'like') {
           story.likes += 1;
         } else {
           story.dislikes += 1;
         }
 
-        // Like kaydını güncelle
         existingLike.action = likeStoryDto.action;
         await this.storyLikesRepository.save(existingLike);
         await this.storiesRepository.save(story);
@@ -181,7 +136,6 @@ export class StoriesService extends BaseService<Story> {
         return { story, userAction: likeStoryDto.action };
       }
     } else {
-      // İlk kez tepki veriliyor
       const newLike = this.storyLikesRepository.create({
         userId,
         storyId: id,
@@ -201,9 +155,6 @@ export class StoriesService extends BaseService<Story> {
     }
   }
 
-  /**
-   * Kullanıcının bir hikayeye verdiği tepkiyi getirir
-   */
   async getUserLikeStatus(storyId: string, userId: string): Promise<string | null> {
     const like = await this.storyLikesRepository.findOne({
       where: { storyId, userId },
@@ -211,4 +162,3 @@ export class StoriesService extends BaseService<Story> {
     return like ? like.action : null;
   }
 }
-

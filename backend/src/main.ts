@@ -5,16 +5,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
-/**
- * Uygulama giriş noktası
- * Swagger dokümantasyonu ve global validation pipe'ı yapılandırır
- */
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-
-
-  // CORS yapılandırması (Frontend ile iletişim için)
   app.enableCors({
     origin: process.env.FRONTEND_URL || [
       'http://localhost:3001',
@@ -24,7 +17,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -33,7 +25,6 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger API dokümantasyonu yapılandırması
   const config = new DocumentBuilder()
     .setTitle('Yerel Hikaye Paylaşım Platformu API')
     .setDescription('Yerel hikayelerin paylaşıldığı platform API dokümantasyonu')
@@ -62,4 +53,3 @@ bootstrap().catch((error) => {
   console.error('❌ Error starting server:', error);
   process.exit(1);
 });
-

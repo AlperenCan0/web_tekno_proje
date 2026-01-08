@@ -4,19 +4,13 @@ import { UsersService } from '../src/users/users.service';
 import { UsersModule } from '../src/users/users.module';
 import * as bcrypt from 'bcrypt';
 
-/**
- * SuperAdmin Oluşturma Script'i
- * İlk SuperAdmin kullanıcısını oluşturur
- */
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const usersService = app.select(UsersModule).get(UsersService, { strict: true });
 
   try {
-    // Şifreyi hash'le
     const hashedPassword = await bcrypt.hash('superadmin123', 10);
 
-    // SuperAdmin oluştur
     const superAdmin = await usersService.create({
       email: 'superadmin@example.com',
       username: 'superadmin',
@@ -44,4 +38,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
