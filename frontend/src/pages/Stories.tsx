@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 const Stories: React.FC = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('newest');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
@@ -42,15 +42,23 @@ const Stories: React.FC = () => {
     }
   };
 
+  // Kategori toggle fonksiyonu
+  const handleCategoryToggle = (categoryId: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
 
   // Filter and sort stories
   const filteredAndSortedStories = useMemo(() => {
     let filtered = stories;
 
-    // Category filter
-    if (selectedCategory) {
+    // Category filter (çoklu)
+    if (selectedCategories.length > 0) {
       filtered = filtered.filter((story) =>
-        story.categories?.some((cat) => cat.id === selectedCategory)
+        story.categories?.some((cat) => selectedCategories.includes(cat.id))
       );
     }
 
@@ -82,7 +90,7 @@ const Stories: React.FC = () => {
     });
 
     return sorted;
-  }, [stories, selectedCategory, searchQuery, sortBy]);
+  }, [stories, selectedCategories, searchQuery, sortBy]);
 
   if (isLoading) {
     return (
@@ -140,8 +148,9 @@ const Stories: React.FC = () => {
       {/* Filter Bar */}
       <FilterBar
         categories={categories}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
+        selectedCategories={selectedCategories}
+        onCategoryToggle={handleCategoryToggle}
+        onClearCategories={() => setSelectedCategories([])}
         sortBy={sortBy}
         onSortChange={setSortBy}
       />
@@ -163,10 +172,10 @@ const Stories: React.FC = () => {
             <div className="text-center py-16 bg-white rounded-lg shadow-md">
               <div className="text-6xl mb-4">📖</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {searchQuery || selectedCategory ? 'Sonuç bulunamadı' : 'Henüz hikaye yok'}
+                {searchQuery || selectedCategories.length > 0 ? 'Sonuç bulunamadı' : 'Henüz hikaye yok'}
               </h3>
               <p className="text-gray-600 mb-6">
-                {searchQuery || selectedCategory
+                {searchQuery || selectedCategories.length > 0
                   ? 'Farklı bir arama terimi veya kategori deneyin'
                   : 'İlk hikayeyi paylaşmak için giriş yapın'}
               </p>

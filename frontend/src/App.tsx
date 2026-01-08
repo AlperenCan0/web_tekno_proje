@@ -12,6 +12,7 @@ import MyStories from './pages/MyStories';
 import CreateStory from './pages/CreateStory';
 import EditStory from './pages/EditStory';
 import AdminPanel from './pages/AdminPanel';
+import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
 
 /**
@@ -54,6 +55,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EditStory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

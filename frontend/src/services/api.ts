@@ -159,6 +159,14 @@ export const usersApi = {
     const response = await api.get('/users/me');
     return response.data;
   },
+
+  /**
+   * Kullanıcı bilgilerini günceller
+   */
+  update: async (id: string, data: Partial<User> & { avatar?: string; firstName?: string; lastName?: string }): Promise<User> => {
+    const response = await api.patch(`/users/${id}`, data);
+    return response.data;
+  },
 };
 
 // Upload API

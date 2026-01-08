@@ -8,12 +8,7 @@ import { API_BASE_URL } from '../config';
  * JWT token yönetimi, login/logout işlemleri ve kullanıcı bilgilerini sağlar
  */
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  role: 'User' | 'Admin' | 'SuperAdmin';
-}
+import { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
@@ -48,16 +43,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // LocalStorage'dan token ve kullanıcı bilgilerini yükle
+  // LocalStorage'dan token yükle ve kullanıcı bilgilerini doğrula
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem('token');
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+      if (storedToken) {
+        try {
+          // Token varsa global header'a ekle (gerçi interceptor zaten yapıyor ama ilk açılışta garanti olsun)
+          // api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+
+          setToken(storedToken);
+
+          // Backend'den güncel kullanıcı bilgilerini çek
+          const response = await api.get('/users/me');
+          const userData = response.data;
+
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+          console.error('Session restore failed:', error);
+          // Token geçersizse temizle
+          setToken(null);
+          setUser(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      }
+      setIsLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   /**

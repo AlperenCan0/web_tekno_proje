@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, CardBody } from '../ui';
 import { User } from '../../types';
 
+import { getPhotoUrl } from '../../config';
+
 export interface AuthorCardProps {
   author: User;
 }
@@ -13,8 +15,18 @@ const AuthorCard: React.FC<AuthorCardProps> = ({ author }) => {
     <Card>
       <CardBody>
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-            {initials}
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0">
+            {author.profile?.avatar ? (
+              <img
+                src={getPhotoUrl(author.profile.avatar)}
+                alt={author.username}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
+                {initials}
+              </div>
+            )}
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900">{author.username}</h3>

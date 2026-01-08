@@ -67,9 +67,12 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-700 text-sm">
+                <Link
+                  to="/profile"
+                  className="text-gray-700 text-sm hover:text-blue-600 transition-colors cursor-pointer"
+                >
                   {user?.username} ({user?.role})
-                </span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"

@@ -78,7 +78,7 @@ const MyStories: React.FC = () => {
           {stories.map((story) => (
             <div
               key={story.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full"
             >
               {story.photos && story.photos.length > 0 && (
                 <img
@@ -87,11 +87,11 @@ const MyStories: React.FC = () => {
                   className="w-full h-48 object-cover"
                 />
               )}
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
                   {story.title}
                 </h2>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                <p className={`text-gray-600 text-sm mb-4 ${story.photos && story.photos.length > 0 ? 'line-clamp-3' : 'line-clamp-6 md:line-clamp-[8]'}`}>
                   {story.content}
                 </p>
                 <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
@@ -100,7 +100,7 @@ const MyStories: React.FC = () => {
                   </span>
                   <span>{new Date(story.createdAt).toLocaleDateString('tr-TR')}</span>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mt-auto">
                   <Link
                     to={`/edit-story/${story.id}`}
                     className="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"

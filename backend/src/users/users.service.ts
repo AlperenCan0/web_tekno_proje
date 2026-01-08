@@ -17,14 +17,14 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @InjectRepository(Profile)
     private profilesRepository: Repository<Profile>,
-  ) {}
+  ) { }
 
   /**
    * Yeni kullanıcı oluşturur
    * Profil bilgileri ile birlikte oluşturulur
    */
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { firstName, lastName, ...userData } = createUserDto;
+    const { firstName, lastName, avatar, ...userData } = createUserDto;
 
     const user = this.usersRepository.create(userData);
     const savedUser = await this.usersRepository.save(user);
@@ -33,6 +33,7 @@ export class UsersService {
     const profile = this.profilesRepository.create({
       firstName,
       lastName,
+      avatar,
       userId: savedUser.id,
     });
     await this.profilesRepository.save(profile);
@@ -91,24 +92,35 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findOne(id);
 
-    if (updateUserDto.password) {
+    // Profil verilerini ayır
+    const { firstName, lastName, avatar, ...userData } = updateUserDto;
+
+    // Şifre varsa hashle
+    if (userData.password) {
       const bcrypt = require('bcrypt');
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
+      userData.password = await bcrypt.hash(userData.password, 10);
     }
 
-    await this.usersRepository.update(id, updateUserDto);
+    // User tablosunu güncelle (eğer veri varsa)
+    if (Object.keys(userData).length > 0) {
+      await this.usersRepository.update(id, userData);
+    }
 
     // Profil bilgilerini güncelle
-    if (updateUserDto.firstName || updateUserDto.lastName) {
+    if (firstName !== undefined || lastName !== undefined || avatar !== undefined) {
       const profile = await this.profilesRepository.findOne({
         where: { userId: id },
       });
 
       if (profile) {
-        await this.profilesRepository.update(profile.id, {
-          firstName: updateUserDto.firstName,
-          lastName: updateUserDto.lastName,
-        });
+        const profileUpdateData: any = {};
+        if (firstName !== undefined) profileUpdateData.firstName = firstName;
+        if (lastName !== undefined) profileUpdateData.lastName = lastName;
+        if (avatar !== undefined) profileUpdateData.avatar = avatar;
+
+        if (Object.keys(profileUpdateData).length > 0) {
+          await this.profilesRepository.update(profile.id, profileUpdateData);
+        }
       }
     }
 

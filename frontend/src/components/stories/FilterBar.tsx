@@ -4,16 +4,18 @@ import { Category } from '../../types';
 
 export interface FilterBarProps {
   categories: Category[];
-  selectedCategory: string;
-  onCategoryChange: (categoryId: string) => void;
+  selectedCategories: string[];
+  onCategoryToggle: (categoryId: string) => void;
+  onClearCategories: () => void;
   sortBy: string;
   onSortChange: (sort: string) => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
   categories,
-  selectedCategory,
-  onCategoryChange,
+  selectedCategories,
+  onCategoryToggle,
+  onClearCategories,
   sortBy,
   onSortChange,
 }) => {
@@ -24,28 +26,26 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Filter className="w-4 h-4 inline mr-1" />
-            Kategori
+            Kategori {selectedCategories.length > 0 && `(${selectedCategories.length} seçili)`}
           </label>
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => onCategoryChange('')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === ''
+              onClick={onClearCategories}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategories.length === 0
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               Tümü
             </button>
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => onCategoryChange(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === category.id
+                onClick={() => onCategoryToggle(category.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedCategories.includes(category.id)
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {category.name}
               </button>
