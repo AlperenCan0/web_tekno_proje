@@ -129,5 +129,19 @@ export class StoriesController {
   ) {
     return this.storiesService.likeStory(id, likeStoryDto, user.id);
   }
+
+  /**
+   * GET /stories/:id/like-status - Kullanıcının bu hikayeye verdiği tepkiyi getirir
+   * Giriş yapmış kullanıcıların mevcut tepkisini kontrol eder
+   */
+  @Get(':id/like-status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Kullanıcının bu hikayeye verdiği tepkiyi getirir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcının mevcut tepkisi (like/dislike/null)' })
+  async getLikeStatus(@Param('id') id: string, @CurrentUser() user: any) {
+    const action = await this.storiesService.getUserLikeStatus(id, user.id);
+    return { userAction: action };
+  }
 }
 

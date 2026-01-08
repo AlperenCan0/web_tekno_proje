@@ -21,11 +21,13 @@ const StoryDetail: React.FC = () => {
   const [story, setStory] = useState<Story | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [userAction, setUserAction] = useState<'like' | 'dislike' | null>(null);
 
   useEffect(() => {
     if (id) {
       loadStory();
       loadComments();
+      loadLikeStatus();
     }
   }, [id]);
 
@@ -51,15 +53,33 @@ const StoryDetail: React.FC = () => {
     }
   };
 
+  const loadLikeStatus = async () => {
+    try {
+      const response = await storiesApi.getLikeStatus(id!);
+      setUserAction(response.userAction as 'like' | 'dislike' | null);
+    } catch (error: any) {
+      // Giriş yapmamış kullanıcılar için hata yoksay
+    }
+  };
+
   const reloadComments = async () => {
     await loadComments();
   };
 
   const handleLikeStory = async (action: 'like' | 'dislike') => {
     try {
-      await storiesApi.like(id!, action);
-      await loadStory();
-      toast.success(action === 'like' ? 'Beğenildi' : 'Beğenilmedi');
+      const response = await storiesApi.like(id!, action);
+      // Backend'den dönen güncel veriyi kullan
+      setStory(response.story);
+      setUserAction(response.userAction as 'like' | 'dislike' | null);
+
+      if (response.userAction === null) {
+        toast.success('Oy geri alındı');
+      } else if (response.userAction === 'like') {
+        toast.success('Beğenildi');
+      } else {
+        toast.success('Beğenilmedi');
+      }
     } catch (error: any) {
       toast.error('İşlem başarısız');
     }
@@ -170,17 +190,17 @@ const StoryDetail: React.FC = () => {
                   <Button
                     variant="ghost"
                     onClick={() => handleLikeStory('like')}
-                    className="flex items-center gap-2"
+                    className={`flex items-center gap-2 ${userAction === 'like' ? '!bg-green-100 !text-green-600' : ''}`}
                   >
-                    <Heart className="w-5 h-5" />
+                    <Heart className={`w-5 h-5 ${userAction === 'like' ? 'fill-green-600' : ''}`} />
                     <span>{story.likes}</span>
                   </Button>
                   <Button
                     variant="ghost"
                     onClick={() => handleLikeStory('dislike')}
-                    className="flex items-center gap-2"
+                    className={`flex items-center gap-2 ${userAction === 'dislike' ? '!bg-red-100 !text-red-600' : ''}`}
                   >
-                    <Heart className="w-5 h-5 rotate-180" />
+                    <Heart className={`w-5 h-5 rotate-180 ${userAction === 'dislike' ? 'fill-red-600' : ''}`} />
                     <span>{story.dislikes}</span>
                   </Button>
                 </div>

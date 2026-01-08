@@ -198,36 +198,6 @@ const StoryForm: React.FC<StoryFormProps> = ({
                         height="400px"
                     />
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-2">
-                            Enlem (Latitude)
-                        </label>
-                        <input
-                            id="latitude"
-                            type="number"
-                            step="any"
-                            value={latitude}
-                            onChange={(e) => setLatitude(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="41.0082"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-2">
-                            Boylam (Longitude)
-                        </label>
-                        <input
-                            id="longitude"
-                            type="number"
-                            step="any"
-                            value={longitude}
-                            onChange={(e) => setLongitude(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="28.9784"
-                        />
-                    </div>
-                </div>
             </div>
 
             {/* Lokasyon Adı */}
@@ -260,8 +230,8 @@ const StoryForm: React.FC<StoryFormProps> = ({
                                 type="button"
                                 onClick={() => handleCategoryToggle(category.id)}
                                 className={`px-4 py-2 rounded-full text-sm transition-colors ${selectedCategories.includes(category.id)
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                     }`}
                             >
                                 {category.name}

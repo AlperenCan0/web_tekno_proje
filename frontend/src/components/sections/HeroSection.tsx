@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Sparkles } from 'lucide-react';
 import { Button } from '../ui';
 import { Link } from 'react-router-dom';
@@ -98,17 +98,28 @@ const HeroSection: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6">
-              Yerel Hikayelerinizi
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300 h-[1.2em]">
-                <motion.span
-                  key={currentWord}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {words[currentWord]}
-                </motion.span>
+              Yerel Hikayeleri
+              <span className="block h-[1.5em] overflow-hidden py-2 my-2 relative text-center" style={{ perspective: '400px' }}>
+                <AnimatePresence initial={false}>
+                  <motion.span
+                    key={currentWord}
+                    layout={false}
+                    initial={{ rotateX: -90, y: '50%', opacity: 0 }}
+                    animate={{ rotateX: 0, y: '0%', opacity: 1 }}
+                    exit={{ rotateX: 90, y: '-50%', opacity: 0 }}
+                    transition={{ duration: 1.6, ease: [0.4, 0, 0.2, 1] }}
+                    className="bg-gradient-to-r from-yellow-300 to-orange-300 absolute inset-x-0 mx-auto"
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      transformOrigin: 'center center',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text'
+                    }}
+                  >
+                    {words[currentWord]}
+                  </motion.span>
+                </AnimatePresence>
               </span>
             </h1>
             <p className="mt-6 max-w-3xl mx-auto text-xl text-blue-100">

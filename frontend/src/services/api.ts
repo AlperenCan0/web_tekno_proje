@@ -58,8 +58,16 @@ export const storiesApi = {
   /**
    * Hikayeyi beğenir veya beğenmez
    */
-  like: async (id: string, action: 'like' | 'dislike'): Promise<Story> => {
+  like: async (id: string, action: 'like' | 'dislike'): Promise<{ story: Story; userAction: string | null }> => {
     const response = await api.post(`/stories/${id}/like`, { action });
+    return response.data;
+  },
+
+  /**
+   * Kullanıcının bu hikayeye verdiği tepkiyi getirir
+   */
+  getLikeStatus: async (id: string): Promise<{ userAction: string | null }> => {
+    const response = await api.get(`/stories/${id}/like-status`);
     return response.data;
   },
 };
