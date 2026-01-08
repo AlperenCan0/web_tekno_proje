@@ -2,149 +2,147 @@
 
 NestJS (Backend) ve React (Frontend) kullanılarak geliştirilmiş yerel hikaye paylaşım platformu.
 
-## Proje Yapısı
+## 📋 Gereksinimler
 
+- **Node.js** v18 veya üzeri
+- **PostgreSQL** v14 veya üzeri
+- **npm** veya **yarn**
+
+## 🚀 Hızlı Kurulum
+
+### 1. PostgreSQL Veritabanı Oluşturma
+
+1. PostgreSQL'i kurun ve çalıştırın
+2. pgAdmin veya psql ile bağlanın
+3. `local_stories` adında yeni bir veritabanı oluşturun:
+```sql
+CREATE DATABASE local_stories;
 ```
-.
-├── backend/          # NestJS backend uygulaması
-├── frontend/         # React frontend uygulaması
-└── README.md         # Bu dosya
-```
 
-## Özellikler
+### 2. Backend Kurulumu
 
-### Backend (NestJS)
-
-- ✅ SQLite + TypeORM ile veritabanı yönetimi
-- ✅ JWT tabanlı kimlik doğrulama ve yetkilendirme
-- ✅ 3 rol sistemi: User, Admin, SuperAdmin
-- ✅ Tüm entity'ler için CRUD işlemleri
-- ✅ Swagger UI ile API dokümantasyonu
-- ✅ Fotoğraf yükleme desteği
-- ✅ Like/Dislike sistemi
-- ✅ Google Maps koordinat desteği
-
-### Frontend (React)
-
-- ✅ React Router ile sayfa yönetimi
-- ✅ Context API ile state yönetimi
-- ✅ Rol tabanlı UI ve routing
-- ✅ Google Maps entegrasyonu (haritadan konum seçme)
-- ✅ Tailwind CSS ile modern tasarım
-- ✅ Responsive tasarım
-
-## Veri Modeli ve İlişkiler
-
-1. **User & Profile** (One-to-One)
-   - Kullanıcı temel bilgileri ve detaylı profil verileri
-
-2. **User & Story** (One-to-Many)
-   - Bir kullanıcı birden fazla hikaye paylaşabilir
-
-3. **Story & Category** (Many-to-Many)
-   - Bir hikaye birden fazla kategoride olabilir
-   - Bir kategoride çokça hikaye bulunabilir
-
-4. **Story & Comment** (One-to-Many)
-   - Hikayelere kullanıcılar yorum yapabilir
-
-## Kurulum
-
-### Backend
-
-1. `backend` klasörüne gidin:
 ```bash
+# Backend klasörüne gidin
 cd backend
-```
 
-2. Bağımlılıkları yükleyin:
-```bash
+# Bağımlılıkları yükleyin
 npm install
-```
 
-3. (Opsiyonel) `.env` dosyasını oluşturun - varsayılan değerler kullanılır:
-```env
-DB_DATABASE=./database.sqlite
-JWT_SECRET=your-secret-key-change-in-production
-JWT_EXPIRES_IN=7d
-PORT=3000
-NODE_ENV=development
-UPLOAD_DEST=./uploads
-```
+# .env dosyasını oluşturun
+cp .env.example .env
 
-4. Uygulamayı çalıştırın:
-```bash
+# .env dosyasını düzenleyin ve veritabanı bilgilerinizi girin
+# DB_PASSWORD=your_postgres_password
+# JWT_SECRET=your_secret_key
+
+# Uygulamayı başlatın
 npm run start:dev
 ```
 
 Backend http://localhost:3000 adresinde çalışacaktır.
-Swagger dokümantasyonu: http://localhost:3000/api
 
-### Frontend
+### 3. SuperAdmin Oluşturma
 
-1. `frontend` klasörüne gidin:
 ```bash
+# Backend klasöründe
+npx ts-node scripts/create-superadmin.ts
+```
+
+Bu komut aşağıdaki bilgilerle SuperAdmin oluşturur:
+- **Email:** superadmin@example.com
+- **Şifre:** superadmin123
+
+⚠️ **Önemli:** Productionda bu bilgileri değiştirin!
+
+### 4. Frontend Kurulumu
+
+```bash
+# Frontend klasörüne gidin
 cd frontend
-```
 
-2. Bağımlılıkları yükleyin:
-```bash
+# Bağımlılıkları yükleyin
 npm install
-```
 
-3. `.env` dosyasını oluşturun ve Google Maps API key'i ekleyin:
-```env
-VITE_GOOGLE_MAPS_API_KEY=your-api-key
-```
+# .env dosyasını oluşturun
+cp .env.example .env
 
-4. Uygulamayı çalıştırın:
-```bash
+# Uygulamayı başlatın
 npm run dev
 ```
 
-Frontend http://localhost:3001 adresinde çalışacaktır.
+Frontend http://localhost:5173 adresinde çalışacaktır.
 
-## Kullanım
+## 📁 Proje Yapısı
 
-1. Backend ve frontend'i ayrı terminal pencerelerinde çalıştırın
-2. Frontend'de kayıt olun veya giriş yapın
-3. Hikaye oluşturun, düzenleyin ve paylaşın
-4. Harita üzerinde hikayelerin konumlarını görüntüleyin
-5. Admin rolü ile yönetim panelinden tüm içerikleri yönetin
+```
+.
+├── backend/          # NestJS backend uygulaması
+│   ├── src/          # Kaynak kodlar
+│   ├── scripts/      # Seed ve yardımcı scriptler
+│   └── uploads/      # Yüklenen dosyalar (veritabanında saklanır)
+├── frontend/         # React frontend uygulaması
+│   └── src/          # Kaynak kodlar
+└── README.md         # Bu dosya
+```
 
-## Teknik Detaylar
+## ✨ Özellikler
 
-### Backend Endpoint'leri
+### Backend (NestJS)
+- ✅ PostgreSQL + TypeORM ile veritabanı yönetimi
+- ✅ JWT tabanlı kimlik doğrulama ve yetkilendirme
+- ✅ 3 rol sistemi: User, Admin, SuperAdmin
+- ✅ Fotoğraflar veritabanında saklanır (kaybolma riski yok)
+- ✅ Swagger UI ile API dokümantasyonu
+- ✅ Like/Dislike sistemi
 
-- **Auth**: `/auth/login`, `/auth/register`
-- **Users**: `/users/*` (CRUD)
-- **Stories**: `/stories/*` (CRUD + Like)
-- **Categories**: `/categories/*` (CRUD)
-- **Comments**: `/comments/*` (CRUD + Like)
-- **Upload**: `/upload/photo`
+### Frontend (React)
+- ✅ React Router ile sayfa yönetimi
+- ✅ Context API ile state yönetimi
+- ✅ Rol tabanlı UI ve routing
+- ✅ Tailwind CSS ile modern tasarım
+- ✅ Responsive tasarım
 
-Tüm endpoint'ler Swagger UI'da dokümante edilmiştir.
+## 👥 Rol Sistemi
 
-### Frontend Sayfaları
+| Rol | Yetkiler |
+|-----|----------|
+| **User** | Hikaye oluşturma, yorum yapma, beğenme |
+| **Admin** | User yetkilerinin hepsine sahip + sadece User oluşturabilir |
+| **SuperAdmin** | Tüm yetkiler + Admin oluşturabilir |
 
-- `/` - Ana sayfa
-- `/login` - Giriş
-- `/register` - Kayıt
-- `/stories` - Hikaye listesi
-- `/stories/:id` - Hikaye detayı
-- `/my-stories` - Kullanıcının hikayeleri
-- `/create-story` - Hikaye oluştur
-- `/edit-story/:id` - Hikaye düzenle
-- `/admin` - Yönetim paneli (Admin/SuperAdmin)
+## 🔗 API Endpoint'leri
 
-## Geliştirme Notları
+- **Swagger UI:** http://localhost:3000/api
+- **Auth:** `/auth/login`, `/auth/register`
+- **Users:** `/users/*` (CRUD)
+- **Stories:** `/stories/*` (CRUD + Like)
+- **Categories:** `/categories/*` (CRUD)
+- **Comments:** `/comments/*` (CRUD + Like)
+- **Upload:** `/upload/photo`, `/upload/view/:filename`
 
-- Backend'de tüm endpoint'ler yorum satırları ile açıklanmıştır
-- Frontend'de tüm component'ler görevleri ile yorumlanmıştır
-- Kod yapısı modüler ve temiz tutulmuştur
-- SOLID prensipleri ve Clean Architecture yaklaşımı uygulanmıştır
+## 📱 Frontend Sayfaları
 
-## Lisans
+| Sayfa | URL | Erişim |
+|-------|-----|--------|
+| Ana Sayfa | `/` | Herkes |
+| Giriş | `/login` | Herkes |
+| Kayıt | `/register` | Herkes |
+| Hikayeler | `/stories` | Herkes |
+| Hikaye Detay | `/stories/:id` | Herkes |
+| Hikayelerim | `/my-stories` | Giriş yapmış |
+| Hikaye Oluştur | `/create-story` | Giriş yapmış |
+| Yönetim Paneli | `/admin` | Admin/SuperAdmin |
+
+## 🛠️ Geliştirme
+
+```bash
+# Backend'i development modda çalıştır
+cd backend && npm run start:dev
+
+# Frontend'i development modda çalıştır
+cd frontend && npm run dev
+```
+
+## 📝 Lisans
 
 MIT
-

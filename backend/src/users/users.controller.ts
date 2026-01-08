@@ -27,32 +27,43 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('JWT-auth')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   /**
    * POST /users - Yeni kullanıcı oluşturur
    * Sadece Admin ve SuperAdmin erişebilir
+   * Admin/SuperAdmin rolü atamak için SuperAdmin olmak gerekir
    */
   @Post()
   @UseGuards(RolesGuard)
   @Roles('Admin', 'SuperAdmin')
   @ApiOperation({ summary: 'Yeni kullanıcı oluşturur (Admin/SuperAdmin)' })
   @ApiResponse({ status: 201, description: 'Kullanıcı başarıyla oluşturuldu' })
-  create(@Body() createUserDto: CreateUserDto) {
+  @ApiResponse({ status: 403, description: 'Admin/SuperAdmin oluşturmak için SuperAdmin yetkisi gerekli' })
+  create(@Body() createUserDto: CreateUserDto, @CurrentUser() currentUser: any) {
+    // Admin veya SuperAdmin oluşturmak için SuperAdmin olmak gerekir
+    if (createUserDto.role && ['Admin', 'SuperAdmin'].includes(createUserDto.role)) {
+      if (currentUser.role !== 'SuperAdmin') {
+        throw new ForbiddenException('Admin veya SuperAdmin oluşturmak için SuperAdmin yetkisi gereklidir');
+      }
+    }
     return this.usersService.create(createUserDto);
   }
 
   /**
    * GET /users - Tüm kullanıcıları listeler
    * Sadece Admin ve SuperAdmin erişebilir
+   * Mevcut kullanıcı listede gösterilmez
    */
   @Get()
   @UseGuards(RolesGuard)
   @Roles('Admin', 'SuperAdmin')
   @ApiOperation({ summary: 'Tüm kullanıcıları listeler (Admin/SuperAdmin)' })
   @ApiResponse({ status: 200, description: 'Kullanıcı listesi' })
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@CurrentUser() currentUser: any) {
+    const users = await this.usersService.findAll();
+    // Mevcut kullanıcıyı listeden çıkar
+    return users.filter(user => user.id !== currentUser.id);
   }
 
   /**
@@ -104,13 +115,19 @@ export class UsersController {
   /**
    * DELETE /users/:id - Kullanıcıyı siler
    * Sadece Admin ve SuperAdmin erişebilir
+   * Kullanıcılar kendilerini silemez
    */
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles('Admin', 'SuperAdmin')
   @ApiOperation({ summary: 'Kullanıcıyı siler (Admin/SuperAdmin)' })
   @ApiResponse({ status: 200, description: 'Kullanıcı başarıyla silindi' })
-  remove(@Param('id') id: string) {
+  @ApiResponse({ status: 403, description: 'Kendinizi silemezsiniz' })
+  remove(@Param('id') id: string, @CurrentUser() currentUser: any) {
+    // Kullanıcılar kendilerini silemez
+    if (currentUser.id === id) {
+      throw new ForbiddenException('Kendinizi silemezsiniz');
+    }
     return this.usersService.remove(id);
   }
 }

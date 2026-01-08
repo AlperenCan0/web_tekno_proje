@@ -5,22 +5,26 @@ import {
   UploadedFile,
   UseGuards,
   BadRequestException,
+  Get,
+  Param,
+  Res,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 import { extname } from 'path';
+import { Response } from 'express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UploadService } from './upload.service';
 
 /**
  * Upload Controller - Dosya yükleme endpoint'lerini yönetir
  * Fotoğraf yükleme işlemlerini gerçekleştirir
  */
-@ApiTags('Upload')
 @Controller('upload')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth('JWT-auth')
+@ApiTags('Upload')
 export class UploadController {
+  constructor(private readonly uploadService: UploadService) { }
   /**
    * POST /upload/photo - Fotoğraf yükler
    * Giriş yapmış kullanıcılar fotoğraf yükleyebilir
@@ -29,15 +33,7 @@ export class UploadController {
   @Post('photo')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req, file, cb) => {
-          // Benzersiz dosya adı oluştur
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          cb(null, `photo-${uniqueSuffix}${ext}`);
-        },
-      }),
+      storage: memoryStorage(),
       fileFilter: (req, file, cb) => {
         // Sadece resim dosyalarına izin ver
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
@@ -65,18 +61,35 @@ export class UploadController {
   })
   @ApiResponse({ status: 201, description: 'Fotoğraf başarıyla yüklendi' })
   @ApiResponse({ status: 400, description: 'Geçersiz dosya formatı veya boyutu' })
-  uploadPhoto(@UploadedFile() file: Express.Multer.File) {
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  async uploadPhoto(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('Dosya yüklenemedi');
     }
 
+    const savedFile = await this.uploadService.saveFile(file);
+
     return {
-      filename: file.filename,
-      originalName: file.originalname,
-      mimetype: file.mimetype,
-      size: file.size,
-      url: `/uploads/${file.filename}`,
+      filename: savedFile.filename,
+      originalName: savedFile.originalName,
+      mimetype: savedFile.mimetype,
+      size: savedFile.size,
+      url: `/upload/view/${savedFile.filename}`,
     };
+  }
+
+  @Get('view/:filename')
+  @ApiOperation({ summary: 'Fotoğrafı görüntüler' })
+  async viewPhoto(@Param('filename') filename: string, @Res() res: Response) {
+    const file = await this.uploadService.getFile(filename);
+
+    res.set({
+      'Content-Type': file.mimetype,
+      'Content-Disposition': `inline; filename="${file.filename}"`,
+    });
+
+    res.send(file.data);
   }
 }
 

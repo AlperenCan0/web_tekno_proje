@@ -7,6 +7,7 @@ import { MESSAGES } from '../constants/messages';
 import { Modal, Button, Input } from '../components/ui';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useFormValidation, validationRules } from '../hooks/useFormValidation';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * Admin Panel Component - Yönetim paneli
@@ -179,31 +180,28 @@ const AdminPanel: React.FC = () => {
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('users')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'users'
-                ? 'border-amber-500 text-amber-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'users'
+              ? 'border-amber-500 text-amber-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
           >
             Kullanıcılar
           </button>
           <button
             onClick={() => setActiveTab('categories')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'categories'
-                ? 'border-amber-500 text-amber-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'categories'
+              ? 'border-amber-500 text-amber-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
           >
             Kategoriler
           </button>
           <button
             onClick={() => setActiveTab('stories')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'stories'
-                ? 'border-amber-500 text-amber-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'stories'
+              ? 'border-amber-500 text-amber-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
           >
             Hikayeler
           </button>
@@ -255,18 +253,16 @@ const AdminPanel: React.FC = () => {
                           {user.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            user.role === 'SuperAdmin' ? 'bg-orange-100 text-orange-800' :
+                          <span className={`px-2 py-1 rounded-full text-xs ${user.role === 'SuperAdmin' ? 'bg-orange-100 text-orange-800' :
                             user.role === 'Admin' ? 'bg-amber-100 text-amber-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
+                              'bg-gray-100 text-gray-800'
+                            }`}>
                             {user.role}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                          }`}>
+                          <span className={`px-2 py-1 rounded-full text-xs ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}>
                             {user.isActive ? 'Aktif' : 'Pasif'}
                           </span>
                         </td>
@@ -359,7 +355,7 @@ const AdminPanel: React.FC = () => {
                       <div className="flex-1">
                         <h3 className="font-semibold text-lg">{story.title}</h3>
                         <p className="text-sm text-gray-600 mt-1">
-                          Yazar: {story.author?.username || 'Bilinmiyor'} | 
+                          Yazar: {story.author?.username || 'Bilinmiyor'} |
                           {story.isPublished ? ' ✅ Yayında' : ' ⏸️ Taslak'} |
                           {new Date(story.createdAt).toLocaleDateString('tr-TR')}
                         </p>
@@ -465,7 +461,9 @@ interface UserModalProps {
 
 const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess }) => {
   const { execute, isLoading } = useApiCall();
+  const { user: currentUser } = useAuth();
   const isEditMode = !!user;
+  const isSuperAdmin = currentUser?.role === 'SuperAdmin';
 
   const {
     values,
@@ -591,8 +589,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess 
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             <option value="User">User</option>
-            <option value="Admin">Admin</option>
-            <option value="SuperAdmin">SuperAdmin</option>
+            {isSuperAdmin && (
+              <option value="Admin">Admin</option>
+            )}
           </select>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -788,17 +787,17 @@ const StoryModal: React.FC<StoryModalProps> = ({ isOpen, onClose, story, onSucce
     await execute(
       () => isEditMode && story
         ? storiesApi.update(story.id, {
-            title: values.title,
-            content: values.content,
-            locationName: values.locationName || undefined,
-            isPublished: values.isPublished,
-          })
+          title: values.title,
+          content: values.content,
+          locationName: values.locationName || undefined,
+          isPublished: values.isPublished,
+        })
         : storiesApi.create({
-            title: values.title,
-            content: values.content,
-            locationName: values.locationName || undefined,
-            isPublished: values.isPublished,
-          }),
+          title: values.title,
+          content: values.content,
+          locationName: values.locationName || undefined,
+          isPublished: values.isPublished,
+        }),
       {
         successMessage: isEditMode
           ? MESSAGES.SUCCESS.STORY_UPDATED
@@ -906,19 +905,17 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
-            <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-              user.role === 'SuperAdmin' ? 'bg-orange-100 text-orange-800' :
+            <span className={`inline-block px-2 py-1 rounded-full text-xs ${user.role === 'SuperAdmin' ? 'bg-orange-100 text-orange-800' :
               user.role === 'Admin' ? 'bg-amber-100 text-amber-800' :
-              'bg-gray-100 text-gray-800'
-            }`}>
+                'bg-gray-100 text-gray-800'
+              }`}>
               {user.role}
             </span>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Durum</label>
-            <span className={`inline-block px-2 py-1 rounded-full text-xs ${
-              user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-            }`}>
+            <span className={`inline-block px-2 py-1 rounded-full text-xs ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
               {user.isActive ? 'Aktif' : 'Pasif'}
             </span>
           </div>
@@ -1012,9 +1009,8 @@ const ViewStoryModal: React.FC<ViewStoryModalProps> = ({ isOpen, onClose, story 
             </div>
             <div>
               <span className="font-medium">Durum:</span>{' '}
-              <span className={`px-2 py-1 rounded-full text-xs ${
-                story.isPublished ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
+              <span className={`px-2 py-1 rounded-full text-xs ${story.isPublished ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
                 {story.isPublished ? 'Yayında' : 'Taslak'}
               </span>
             </div>

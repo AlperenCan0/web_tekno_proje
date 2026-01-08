@@ -33,6 +33,9 @@ export class StoriesService extends BaseService<Story> {
   async create(createStoryDto: CreateStoryDto, authorId: string): Promise<Story> {
     const { categoryIds, ...storyData } = createStoryDto;
 
+    // Debug: Fotoğrafların gelip gelmediğini kontrol et
+    console.log('📸 Story oluşturuluyor - Photos:', createStoryDto.photos);
+
     const story = this.storiesRepository.create({
       ...storyData,
       authorId,

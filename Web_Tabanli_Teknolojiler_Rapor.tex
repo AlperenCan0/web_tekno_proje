@@ -1,0 +1,690 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[turkish]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{adjustbox}
+\usepackage{array}
+\usepackage{longtable}
+
+\geometry{margin=2.5cm}
+
+% Kod renklendirme ayarları
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    showstringspaces=false
+}
+
+\title{\textbf{YEREL HİKAYE PAYLAŞIM PLATFORMU}\\
+\large Web Tabanlı Teknolojiler Proje Raporu}
+\author{Öğrenci: Alperen CAN\\
+Numara: 18253513}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\vspace{1cm}
+\noindent\textbf{Proje Github Repo:} \url{https://github.com/[github-username]/web_teknolojileri_github.git}
+
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{GİRİŞ}
+
+Bu rapor, Yerel Hikaye Paylaşım Platformu için geliştirilmiş olan web uygulamasının teknik detaylarını içermektedir. Proje, modern web teknolojileri kullanılarak tam yığın (full-stack) bir mimari ile geliştirilmiştir. Raporda backend ve frontend bileşenlerinin yapısı, kullanılan teknolojiler ve sistem akışları detaylı olarak açıklanmaktadır.
+
+\section{PROJE ÖZETİ}
+
+Yerel Hikaye Paylaşım Platformu, kullanıcıların yerel hikayelerini paylaşabileceği, harita üzerinde konumlandırabileceği ve diğer kullanıcılarla etkileşim kurabileceği kapsamlı bir web uygulamasıdır. Sistem, kullanıcıların hikaye oluşturmasını, düzenlemesini ve paylaşmasını sağlarken, yöneticilerin içerik ve kullanıcı yönetimi yapmasına olanak tanımaktadır.
+
+\subsection{Projenin Temel Özellikleri}
+
+\begin{itemize}
+    \item Kullanıcı kayıt ve giriş sistemi
+    \item Rol tabanlı yetkilendirme (User, Admin)
+    \item Hikaye oluşturma, düzenleme ve paylaşma
+    \item Kategori yönetimi
+    \item Yorum ve beğeni sistemi
+    \item Google Maps entegrasyonu ile konum bazlı hikaye paylaşımı
+    \item Fotoğraf yükleme ve galeri görüntüleme
+    \item Responsive (duyarlı) tasarım
+    \item Tek sayfa uygulama (SPA) mimarisi
+\end{itemize}
+
+\section{TEKNOLOJİ YIĞINI (TECHNOLOGY STACK)}
+
+\subsection{Backend Teknolojileri}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Teknoloji} & \textbf{Açıklama} \\
+\hline
+NestJS & Node.js tabanlı sunucu framework'ü, modüler mimari ve TypeScript desteği \\
+\hline
+TypeORM & Object-Relational Mapping aracı, veritabanı işlemlerini kolaylaştırır \\
+\hline
+PostgreSQL & İlişkisel veritabanı yönetim sistemi, güvenilir ve ölçeklenebilir \\
+\hline
+JWT (JSON Web Token) & Kimlik doğrulama mekanizması, stateless authentication \\
+\hline
+Swagger & API dokümantasyonu, interaktif API test arayüzü \\
+\hline
+bcrypt & Parola şifreleme, güvenli hash algoritması \\
+\hline
+Multer & Dosya yükleme middleware'i, fotoğraf yükleme işlemleri \\
+\hline
+Passport & Kimlik doğrulama middleware'i, JWT stratejisi ile entegrasyon \\
+\hline
+class-validator & Veri doğrulama, DTO'lar için validation decorator'ları \\
+\hline
+class-transformer & Veri dönüşümü, nesne mapping işlemleri \\
+\hline
+\end{tabularx}
+}
+\caption{Backend Teknolojileri}
+\end{table}
+
+\subsection{Frontend Teknolojileri}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Teknoloji} & \textbf{Açıklama} \\
+\hline
+React 18 & Kullanıcı arayüzü kütüphanesi, component tabanlı mimari \\
+\hline
+TypeScript & Tip güvenli JavaScript süper seti, geliştirme hatalarını önler \\
+\hline
+React Router & Client-side yönlendirme, SPA routing yönetimi \\
+\hline
+Axios & HTTP istemci kütüphanesi, RESTful API çağrıları \\
+\hline
+Vite & Modern build aracı, hızlı geliştirme ve build süreçleri \\
+\hline
+Tailwind CSS & Utility-first CSS framework, hızlı ve responsive tasarım \\
+\hline
+React Hot Toast & Bildirim kütüphanesi, kullanıcı geri bildirimleri \\
+\hline
+@react-google-maps/api & Google Maps React entegrasyonu, harita görüntüleme \\
+\hline
+React Leaflet & Leaflet harita kütüphanesi, alternatif harita görüntüleme \\
+\hline
+Framer Motion & Animasyon kütüphanesi, akıcı UI animasyonları \\
+\hline
+Lucide React & İkon kütüphanesi, modern ve tutarlı ikonlar \\
+\hline
+\end{tabularx}
+}
+\caption{Frontend Teknolojileri}
+\end{table}
+
+\section{VERİTABANI MİMARİSİ}
+
+\subsection{Varlık İlişki Modeli (Entity Relationship)}
+
+Sistem, aşağıdaki ilişkileri içeren bir veritabanı yapısına sahiptir:
+
+\begin{itemize}
+    \item \textbf{USERS (1) $\rightarrow$ PROFILE (1)}: Bir kullanıcının bir profili olabilir (One-to-One)
+    \item \textbf{USERS (1) $\rightarrow$ STORIES (N)}: Bir kullanıcının birden fazla hikayesi olabilir (One-to-Many)
+    \item \textbf{USERS (1) $\rightarrow$ COMMENTS (N)}: Bir kullanıcının birden fazla yorumu olabilir (One-to-Many)
+    \item \textbf{STORIES (N) $\leftrightarrow$ CATEGORIES (N)}: Bir hikaye birden fazla kategoride olabilir, bir kategoride birden fazla hikaye olabilir (Many-to-Many)
+    \item \textbf{STORIES (1) $\rightarrow$ COMMENTS (N)}: Bir hikayeye birden fazla yorum yapılabilir (One-to-Many)
+    \item \textbf{STORIES (1) $\rightarrow$ STORY\_LIKES (N)}: Bir hikayeye birden fazla beğeni yapılabilir (One-to-Many)
+    \item \textbf{COMMENTS (1) $\rightarrow$ COMMENT\_LIKES (N)}: Bir yoruma birden fazla beğeni yapılabilir (One-to-Many)
+\end{itemize}
+
+\subsection{ENUM Değerleri}
+
+\begin{itemize}
+    \item \textbf{UserRole}: User | Admin
+    \item \textbf{LikeAction}: like | dislike
+\end{itemize}
+
+\subsection{Veritabanı Tabloları}
+
+\subsubsection{USERS Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz kullanıcı kimliği \\
+\hline
+email & VARCHAR (UNIQUE) & Kullanıcı e-posta adresi \\
+\hline
+username & VARCHAR & Kullanıcı adı \\
+\hline
+password & VARCHAR & Şifrelenmiş parola (bcrypt) \\
+\hline
+role & VARCHAR(20) & Kullanıcı rolü (User/Admin) \\
+\hline
+isActive & BOOLEAN & Kullanıcı aktiflik durumu \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+updatedAt & TIMESTAMP & Güncellenme tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{USERS Tablosu}
+\end{table}
+
+\subsubsection{PROFILES Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz profil kimliği \\
+\hline
+userId & UUID (FK) & Kullanıcı kimliği (USERS tablosuna referans) \\
+\hline
+firstName & VARCHAR & Ad \\
+\hline
+lastName & VARCHAR & Soyad \\
+\hline
+bio & TEXT & Biyografi \\
+\hline
+avatar & VARCHAR & Profil fotoğrafı URL'i \\
+\hline
+phone & VARCHAR & Telefon numarası \\
+\hline
+location & VARCHAR & Konum bilgisi \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+updatedAt & TIMESTAMP & Güncellenme tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{PROFILES Tablosu}
+\end{table}
+
+\subsubsection{STORIES Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz hikaye kimliği \\
+\hline
+authorId & UUID (FK) & Yazar kimliği (USERS tablosuna referans) \\
+\hline
+title & VARCHAR & Hikaye başlığı \\
+\hline
+content & TEXT & Hikaye içeriği \\
+\hline
+latitude & DECIMAL(10,8) & Enlem koordinatı (Google Maps) \\
+\hline
+longitude & DECIMAL(11,8) & Boylam koordinatı (Google Maps) \\
+\hline
+locationName & VARCHAR & Lokasyon adı \\
+\hline
+photos & SIMPLE-ARRAY & Fotoğraf URL'leri dizisi \\
+\hline
+likes & INTEGER & Beğeni sayısı \\
+\hline
+dislikes & INTEGER & Beğenmeme sayısı \\
+\hline
+isPublished & BOOLEAN & Yayınlanma durumu \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+updatedAt & TIMESTAMP & Güncellenme tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{STORIES Tablosu}
+\end{table}
+
+\subsubsection{CATEGORIES Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz kategori kimliği \\
+\hline
+name & VARCHAR & Kategori adı \\
+\hline
+description & TEXT & Kategori açıklaması \\
+\hline
+icon & VARCHAR & Kategori ikonu \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+updatedAt & TIMESTAMP & Güncellenme tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{CATEGORIES Tablosu}
+\end{table}
+
+\subsubsection{COMMENTS Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz yorum kimliği \\
+\hline
+authorId & UUID (FK) & Yazar kimliği (USERS tablosuna referans) \\
+\hline
+storyId & UUID (FK) & Hikaye kimliği (STORIES tablosuna referans) \\
+\hline
+content & TEXT & Yorum içeriği \\
+\hline
+likes & INTEGER & Beğeni sayısı \\
+\hline
+dislikes & INTEGER & Beğenmeme sayısı \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+updatedAt & TIMESTAMP & Güncellenme tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{COMMENTS Tablosu}
+\end{table}
+
+\subsubsection{STORY\_CATEGORIES Tablosu (Join Table)}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+storyId & UUID (FK) & Hikaye kimliği \\
+\hline
+categoryId & UUID (FK) & Kategori kimliği \\
+\hline
+\end{tabularx}
+}
+\caption{STORY\_CATEGORIES Tablosu (Many-to-Many Join)}
+\end{table}
+
+\subsubsection{STORY\_LIKES Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz beğeni kimliği \\
+\hline
+userId & UUID (FK) & Kullanıcı kimliği \\
+\hline
+storyId & UUID (FK) & Hikaye kimliği \\
+\hline
+action & VARCHAR & Beğeni türü (like/dislike) \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{STORY\_LIKES Tablosu}
+\end{table}
+
+\subsubsection{COMMENT\_LIKES Tablosu}
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{4cm}|p{8cm}|}
+\hline
+\textbf{Alan} & \textbf{Tip} & \textbf{Açıklama} \\
+\hline
+id & UUID (PK) & Benzersiz beğeni kimliği \\
+\hline
+userId & UUID (FK) & Kullanıcı kimliği \\
+\hline
+commentId & UUID (FK) & Yorum kimliği \\
+\hline
+action & VARCHAR & Beğeni türü (like/dislike) \\
+\hline
+createdAt & TIMESTAMP & Oluşturulma tarihi \\
+\hline
+\end{tabularx}
+}
+\caption{COMMENT\_LIKES Tablosu}
+\end{table}
+
+\section{BACKEND API ENDPOINT'LERİ}
+
+Backend, RESTful API prensiplerine uygun olarak tasarlanmıştır. Aşağıda tüm endpoint'ler modüllere göre kategorize edilmiş şekilde açıklanmaktadır.
+
+\subsection{Kimlik Doğrulama Modülü (Auth Module)}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{2cm}|p{4cm}|p{3cm}|X|}
+\hline
+\textbf{Metod} & \textbf{Endpoint} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+POST & /auth/register & Herkese Açık & Yeni kullanıcı kaydı oluşturur. E-posta, kullanıcı adı, parola ve profil bilgilerini alır, başarılı kayıt sonrası JWT token döndürür. \\
+\hline
+POST & /auth/login & Herkese Açık & Mevcut kullanıcı girişi yapar. E-posta ve parola doğrulaması yaparak JWT token döndürür. \\
+\hline
+GET & /auth/me & Giriş Yapmış & Mevcut oturumdaki kullanıcının bilgilerini döndürür. Token doğrulaması için kullanılır. \\
+\hline
+\end{tabularx}
+}
+\caption{Auth Modülü Endpoint'leri}
+\end{table}
+
+\subsection{Kullanıcı Modülü (Users Module)}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{2cm}|p{4cm}|p{3cm}|X|}
+\hline
+\textbf{Metod} & \textbf{Endpoint} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+GET & /users & Admin & Tüm kullanıcıları listeler. \\
+\hline
+GET & /users/me & Giriş Yapmış & Mevcut kullanıcının bilgilerini getirir. \\
+\hline
+GET & /users/:id & Giriş Yapmış & Belirli bir kullanıcının detaylarını getirir. \\
+\hline
+PATCH & /users/:id & Giriş Yapmış & Kullanıcı bilgilerini günceller. Sadece kendi profilini veya Admin tüm profilleri güncelleyebilir. \\
+\hline
+DELETE & /users/:id & Admin & Kullanıcıyı siler. \\
+\hline
+\end{tabularx}
+}
+\caption{Users Modülü Endpoint'leri}
+\end{table}
+
+\subsection{Hikaye Modülü (Stories Module)}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{2cm}|p{4cm}|p{3cm}|X|}
+\hline
+\textbf{Metod} & \textbf{Endpoint} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+GET & /stories & Herkese Açık & Tüm hikayeleri listeler. Varsayılan olarak sadece yayınlanmış hikayeleri gösterir. Query parametresi ile tüm hikayeler görüntülenebilir. \\
+\hline
+GET & /stories/my & Giriş Yapmış & Mevcut kullanıcının hikayelerini listeler. \\
+\hline
+GET & /stories/:id & Herkese Açık & Belirli bir hikayenin detaylarını getirir. İlişkili verilerle birlikte (yazar, kategoriler, yorumlar). \\
+\hline
+POST & /stories & Giriş Yapmış & Yeni hikaye oluşturur. Başlık, içerik, koordinatlar, kategoriler ve fotoğraflar alınır. \\
+\hline
+PATCH & /stories/:id & Giriş Yapmış & Hikaye bilgilerini günceller. Sadece hikaye sahibi veya Admin güncelleyebilir. \\
+\hline
+DELETE & /stories/:id & Giriş Yapmış & Hikayeyi siler. Sadece hikaye sahibi veya Admin silebilir. \\
+\hline
+POST & /stories/:id/like & Giriş Yapmış & Hikayeyi beğenir veya beğenmez. Her kullanıcı bir kez tepki verebilir, aynı tepkiyi tekrar verirse geri alınır. \\
+\hline
+GET & /stories/:id/like-status & Giriş Yapmış & Kullanıcının bu hikayeye verdiği tepkiyi getirir (like/dislike/null). \\
+\hline
+\end{tabularx}
+}
+\caption{Stories Modülü Endpoint'leri}
+\end{table}
+
+\subsection{Kategori Modülü (Categories Module)}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{2cm}|p{4cm}|p{3cm}|X|}
+\hline
+\textbf{Metod} & \textbf{Endpoint} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+GET & /categories & Herkese Açık & Tüm kategorileri listeler. \\
+\hline
+GET & /categories/:id & Herkese Açık & Belirli bir kategorinin detaylarını getirir. \\
+\hline
+POST & /categories & Admin & Yeni kategori oluşturur. Kategori adı ve açıklaması alınır. \\
+\hline
+PATCH & /categories/:id & Admin & Kategori bilgilerini günceller. \\
+\hline
+DELETE & /categories/:id & Admin & Kategoriyi siler. \\
+\hline
+\end{tabularx}
+}
+\caption{Categories Modülü Endpoint'leri}
+\end{table}
+
+\subsection{Yorum Modülü (Comments Module)}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{2cm}|p{4cm}|p{3cm}|X|}
+\hline
+\textbf{Metod} & \textbf{Endpoint} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+GET & /comments & Herkese Açık & Tüm yorumları listeler. Query parametresi ile belirli bir hikayeye ait yorumlar filtrelenebilir. \\
+\hline
+GET & /comments/:id & Herkese Açık & Belirli bir yorumun detaylarını getirir. \\
+\hline
+POST & /comments & Giriş Yapmış & Yeni yorum oluşturur. Yorum içeriği ve hikaye ID'si alınır. \\
+\hline
+PATCH & /comments/:id & Giriş Yapmış & Yorum bilgilerini günceller. Sadece yorum sahibi veya Admin güncelleyebilir. \\
+\hline
+DELETE & /comments/:id & Giriş Yapmış & Yorumu siler. Sadece yorum sahibi veya Admin silebilir. \\
+\hline
+POST & /comments/:id/like & Giriş Yapmış & Yorumu beğenir veya beğenmez. Her kullanıcı bir kez tepki verebilir. \\
+\hline
+GET & /comments/:id/like-status & Giriş Yapmış & Kullanıcının bu yoruma verdiği tepkiyi getirir. \\
+\hline
+\end{tabularx}
+}
+\caption{Comments Modülü Endpoint'leri}
+\end{table}
+
+\subsection{Yükleme Modülü (Upload Module)}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{2cm}|p{4cm}|p{3cm}|X|}
+\hline
+\textbf{Metod} & \textbf{Endpoint} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+POST & /upload/photo & Giriş Yapmış & Fotoğraf yükler. Multipart/form-data formatında dosya alınır. Sadece resim dosyalarına izin verilir (jpg, jpeg, png, gif). Maksimum dosya boyutu 5MB'dır. Yüklenen dosya /uploads klasörüne kaydedilir ve URL döndürülür. \\
+\hline
+\end{tabularx}
+}
+\caption{Upload Modülü Endpoint'leri}
+\end{table}
+
+\section{FRONTEND SAYFALARI VE ROUTING}
+
+Frontend, React Router kullanılarak tek sayfa uygulama (SPA) mimarisi ile geliştirilmiştir. Aşağıda tüm sayfalar ve routing yapılandırması açıklanmaktadır.
+
+\subsection{Routing Yapılandırması}
+
+\begin{table}[H]
+\centering
+\adjustbox{width=\textwidth,center}
+{
+\begin{tabularx}{\textwidth}{|p{3cm}|p{3cm}|p{3cm}|X|}
+\hline
+\textbf{Route} & \textbf{Bileşen} & \textbf{Erişim} & \textbf{Açıklama} \\
+\hline
+/ & Home & Herkese Açık & Ana sayfa, platform tanıtımı ve hızlı erişim linkleri \\
+\hline
+/login & Login & Herkese Açık & Kullanıcı giriş sayfası \\
+\hline
+/register & Register & Herkese Açık & Kullanıcı kayıt sayfası \\
+\hline
+/stories & Stories & Herkese Açık & Tüm hikayelerin listelendiği sayfa, liste/harita görünümü \\
+\hline
+/stories/:id & StoryDetail & Herkese Açık & Hikaye detay sayfası, içerik, fotoğraflar, yorumlar ve harita \\
+\hline
+/my-stories & MyStories & Giriş Yapmış & Kullanıcının kendi hikayelerini listelediği sayfa \\
+\hline
+/create-story & CreateStory & Giriş Yapmış & Yeni hikaye oluşturma sayfası \\
+\hline
+/edit-story/:id & EditStory & Giriş Yapmış & Hikaye düzenleme sayfası \\
+\hline
+/profile & Profile & Giriş Yapmış & Kullanıcı profil sayfası, ayarlar ve etkileşimler \\
+\hline
+/admin & AdminPanel & Admin & Yönetim paneli, kullanıcı, kategori ve hikaye yönetimi \\
+\hline
+\end{tabularx}
+}
+\caption{Frontend Routing Yapılandırması}
+\end{table}
+
+\subsection{Korumalı Route'lar}
+
+Sistem, iki tip korumalı route kullanmaktadır:
+
+\begin{itemize}
+    \item \textbf{ProtectedRoute}: Giriş yapmış kullanıcılar için. Giriş yapmamış kullanıcılar login sayfasına yönlendirilir.
+    \item \textbf{AdminRoute}: Admin rolü için. Yetkisiz kullanıcılar ana sayfaya yönlendirilir.
+\end{itemize}
+
+\subsection{Ana Bileşenler}
+
+\subsubsection{Home Sayfası}
+Ana sayfa, platformun tanıtımını yapar ve kullanıcılara hızlı erişim linkleri sunar. Hero section, özellik kartları ve call-to-action bölümleri içerir.
+
+\subsubsection{Stories Sayfası}
+Hikayelerin listelendiği sayfa. Liste ve harita görünümü arasında geçiş yapılabilir. Kategori filtresi ve arama özelliği bulunur. Her hikaye kartında beğeni/beğenmeme butonları yer alır.
+
+\subsubsection{StoryDetail Sayfası}
+Hikaye detay sayfası, hikaye içeriğini, fotoğraf galerisini, yorumları ve harita görünümünü gösterir. Kullanıcılar yorum yapabilir ve beğeni/beğenmeme işlemi gerçekleştirebilir.
+
+\subsubsection{CreateStory/EditStory Sayfaları}
+Hikaye oluşturma ve düzenleme formları. Başlık, içerik, lokasyon seçimi (Google Maps entegrasyonu), kategori seçimi ve fotoğraf yükleme özellikleri içerir.
+
+\subsubsection{AdminPanel Sayfası}
+Yönetim paneli, Admin kullanıcıları için kullanıcı, kategori ve hikaye yönetimi sekmeleri içerir. CRUD işlemleri gerçekleştirilebilir.
+
+\subsubsection{Profile Sayfası}
+Kullanıcı profil sayfası, ayarlar ve etkileşimler sekmeleri içerir. Kullanıcı bilgileri güncellenebilir, profil fotoğrafı yüklenebilir ve kullanıcının hikayeleri ile yorumları görüntülenebilir.
+
+\section{BAĞLAM YÖNETİMİ (CONTEXT MANAGEMENT)}
+
+\subsection{AuthContext}
+
+Uygulamanın merkezi kimlik doğrulama durumunu yönetir. Kullanıcı bilgileri, giriş, kayıt ve çıkış fonksiyonlarını tüm bileşenlere React Context API aracılığıyla sağlar.
+
+\subsubsection{State Yönetimi}
+\begin{itemize}
+    \item \textbf{user}: Mevcut kullanıcı bilgileri
+    \item \textbf{token}: JWT authentication token
+    \item \textbf{isAuthenticated}: Kullanıcının giriş yapıp yapmadığı bilgisi
+    \item \textbf{isAdmin}: Kullanıcının Admin rolüne sahip olup olmadığı
+\end{itemize}
+
+\subsubsection{Fonksiyonlar}
+\begin{itemize}
+    \item \textbf{login(email, password)}: Kullanıcı girişi yapar, token'ı localStorage'a kaydeder
+    \item \textbf{register(userData)}: Yeni kullanıcı kaydı oluşturur, token'ı localStorage'a kaydeder
+    \item \textbf{logout()}: Kullanıcı çıkışı yapar, token'ı temizler
+    \item \textbf{checkAuth()}: Token geçerliliğini kontrol eder, uygulama başlatılırken çağrılır
+\end{itemize}
+
+\section{GÜVENLİK ÖZELLİKLERİ}
+
+\subsection{Kimlik Doğrulama ve Yetkilendirme}
+\begin{itemize}
+    \item JWT token tabanlı stateless authentication
+    \item Parolalar bcrypt ile hash'lenerek saklanır
+    \item Token'lar HTTP-only cookie veya localStorage'da saklanır
+    \item Token geçerliliği her istekte kontrol edilir
+\end{itemize}
+
+\subsection{Rol Tabanlı Erişim Kontrolü}
+\begin{itemize}
+    \item User: Normal kullanıcı, hikaye oluşturma ve yorum yapma yetkisi
+    \item Admin: Tüm yetkilere sahip, kullanıcı, kategori ve içerik yönetimi yetkisi
+\end{itemize}
+
+\subsection{Veri Doğrulama}
+\begin{itemize}
+    \item Backend'de class-validator ile DTO doğrulama
+    \item Frontend'de form validation
+    \item SQL injection koruması (TypeORM parametreli sorgular)
+    \item XSS koruması (React otomatik escaping)
+\end{itemize}
+
+\section{SONUÇ}
+
+Yerel Hikaye Paylaşım Platformu, modern web geliştirme prensipleri ve endüstri standartları gözetilerek geliştirilmiş kapsamlı bir tam yığın uygulamadır. NestJS ile oluşturulan backend, RESTful API standartlarına uygun, güvenli ve ölçeklenebilir bir yapı sunarken; React ile geliştirilen frontend, kullanıcı dostu ve responsive bir arayüz sağlamaktadır.
+
+Sistemin modüler mimarisi, gelecekteki geliştirmeler ve bakım işlemleri için uygun bir zemin oluşturmaktadır. Rol tabanlı yetkilendirme, veri doğrulama ve şifreli parola saklama gibi güvenlik önlemleri, uygulamanın güvenilirliğini artırmaktadır. Google Maps entegrasyonu ile konum bazlı hikaye paylaşımı, kullanıcı deneyimini zenginleştirmektedir.
+
+Proje, SOLID prensipleri ve Clean Architecture yaklaşımı ile geliştirilmiş, kod tekrarını önleyen ve bakımı kolay bir yapıya sahiptir. Swagger ile dokümante edilmiş API'ler, geliştiriciler için kolay entegrasyon imkanı sunmaktadır.
+
+\section{EK BİLGİLER}
+
+\subsection{Kurulum ve Çalıştırma}
+
+Backend ve frontend ayrı dizinlerde bulunmakta ve bağımsız olarak çalıştırılabilmektedir. Her iki uygulama da kendi bağımlılıklarını yönetir ve geliştirme ortamında hot-reload desteği sunar.
+
+\subsection{API Dokümantasyonu}
+
+Tüm API endpoint'leri Swagger UI ile dokümante edilmiştir. Backend çalıştırıldığında \texttt{http://localhost:3000/api} adresinden erişilebilir.
+
+\subsection{Geliştirme Notları}
+
+\begin{itemize}
+    \item Kod yapısı modüler ve temiz tutulmuştur
+    \item SOLID prensipleri ve Clean Architecture yaklaşımı uygulanmıştır
+    \item TypeScript kullanılarak tip güvenliği sağlanmıştır
+\end{itemize}
+
+\end{document}

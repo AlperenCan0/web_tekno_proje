@@ -12,10 +12,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // Statik dosya servisi (yüklenen fotoğraflar için)
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
+
 
   // CORS yapılandırması (Frontend ile iletişim için)
   app.enableCors({

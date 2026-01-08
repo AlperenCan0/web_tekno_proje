@@ -27,6 +27,11 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { firstName, lastName, avatar, ...userData } = createUserDto;
 
+    // Şifreyi hash'le
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
+
     const user = this.usersRepository.create(userData);
     const savedUser = await this.usersRepository.save(user);
 
