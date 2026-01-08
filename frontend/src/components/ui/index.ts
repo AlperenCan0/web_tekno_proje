@@ -18,7 +18,3 @@ export type { SkeletonProps } from './Skeleton';
 
 export { default as PasswordStrength } from './PasswordStrength';
 export type { PasswordStrengthProps } from './PasswordStrength';
-
-
-
-

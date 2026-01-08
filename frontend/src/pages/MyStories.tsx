@@ -6,6 +6,9 @@ import { getPhotoUrl } from '../config';
 import { useApiCall } from '../hooks/useApiCall';
 import { useDeleteConfirmation } from '../hooks/useDeleteConfirmation';
 import { MESSAGES } from '../constants/messages';
+import { Spinner } from '../components/ui';
+import { Container } from '../components/layout';
+import { Plus, BookOpen } from 'lucide-react';
 
 /**
  * My Stories Page Component - Kullanıcının kendi hikayelerini listeler
@@ -50,32 +53,47 @@ const MyStories: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">Yükleniyor...</div>
-      </div>
+      <Container className="py-12">
+        <div className="flex justify-center items-center min-h-[400px]">
+          <Spinner size="lg" text="Hikayeleriniz yükleniyor..." />
+        </div>
+      </Container>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Hikayelerim</h1>
+    <Container className="py-8 md:py-12">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Hikayelerim</h1>
+          <p className="text-gray-600">
+            {stories.length} hikaye
+          </p>
+        </div>
         <Link
           to="/create-story"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all shadow-md hover:shadow-lg font-medium"
         >
+          <Plus className="w-5 h-5" />
           Yeni Hikaye Ekle
         </Link>
       </div>
 
       {stories.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 mb-4">Henüz hikaye eklemediniz.</p>
+        <div className="text-center py-16 bg-white rounded-lg shadow-md">
+          <BookOpen className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Henüz hikaye eklemediniz
+          </h3>
+          <p className="text-gray-600 mb-6">
+            İlk hikayenizi paylaşarak topluluğa katılın
+          </p>
           <Link
             to="/create-story"
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all shadow-md hover:shadow-lg font-medium"
           >
-            İlk hikayenizi oluşturun →
+            <Plus className="w-5 h-5" />
+            İlk Hikayenizi Oluşturun
           </Link>
         </div>
       ) : (
@@ -105,16 +123,16 @@ const MyStories: React.FC = () => {
                   </span>
                   <span>{new Date(story.createdAt).toLocaleDateString('tr-TR')}</span>
                 </div>
-                <div className="flex items-center space-x-2 mt-auto">
+                <div className="flex items-center gap-2 mt-auto">
                   <Link
                     to={`/edit-story/${story.id}`}
-                    className="flex-1 text-center px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
+                    className="flex-1 text-center px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-md hover:from-amber-700 hover:to-orange-700 transition-all font-medium"
                   >
                     Düzenle
                   </Link>
                   <button
                     onClick={() => handleDelete(story.id)}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors font-medium"
                   >
                     Sil
                   </button>
@@ -124,7 +142,7 @@ const MyStories: React.FC = () => {
           ))}
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 

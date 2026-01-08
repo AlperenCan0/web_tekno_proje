@@ -158,7 +158,7 @@ const StoryDetail: React.FC = () => {
         {/* Back Button */}
         <Link
           to="/stories"
-          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 transition-colors"
+          className="inline-flex items-center text-amber-600 hover:text-amber-700 mb-6 transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Hikayelere Dön
@@ -204,7 +204,7 @@ const StoryDetail: React.FC = () => {
                     {story.categories.map((category) => (
                       <span
                         key={category.id}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium"
                       >
                         <Tag className="w-3 h-3" />
                         {category.name}
@@ -269,7 +269,7 @@ const StoryDetail: React.FC = () => {
                     <MapPin className="w-5 h-5 text-amber-600" />
                     Konum
                   </h2>
-                  <div className="rounded-lg overflow-hidden">
+                  <div className="rounded-lg overflow-hidden relative z-0">
                     <StoryMap stories={[story]} />
                   </div>
                 </CardBody>

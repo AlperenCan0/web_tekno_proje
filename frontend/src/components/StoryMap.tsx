@@ -51,12 +51,12 @@ const StoryMap: React.FC<StoryMapProps> = ({ stories, onStoryClick, height = '50
   const zoom = storiesWithLocation.length > 0 ? 6 : 5;
 
   return (
-    <div className="w-full h-full">
-      <div style={{ height, width: '100%' }} className="rounded-lg overflow-hidden border border-gray-200">
+    <div className="w-full h-full relative z-0">
+      <div style={{ height, width: '100%' }} className="rounded-lg overflow-hidden border border-gray-200 relative z-0">
         <MapContainer
           center={mapCenter}
           zoom={zoom}
-          style={{ height: '100%', width: '100%' }}
+          style={{ height: '100%', width: '100%', zIndex: 0 }}
           scrollWheelZoom={true}
         >
           <TileLayer

@@ -12,4 +12,3 @@ export type { AuthorCardProps } from './AuthorCard';
 export type { CommentSectionProps } from './CommentSection';
 export type { StoryFormData } from './StoryForm';
 export type { ImageGalleryProps } from './ImageGallery';
-

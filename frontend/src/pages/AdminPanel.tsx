@@ -5,7 +5,7 @@ import { useApiCall } from '../hooks/useApiCall';
 import { useDeleteConfirmation } from '../hooks/useDeleteConfirmation';
 import { MESSAGES } from '../constants/messages';
 import { Modal, Button, Input } from '../components/ui';
-import { Plus, Edit, Trash2, X, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useFormValidation, validationRules } from '../hooks/useFormValidation';
 
 /**
@@ -559,6 +559,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess 
           onBlur={() => handleBlur('email')}
           error={touched.email ? errors.email : undefined}
           required
+          labelColor="light"
         />
         <Input
           label="Kullanıcı Adı"
@@ -568,6 +569,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess 
           onBlur={() => handleBlur('username')}
           error={touched.username ? errors.username : undefined}
           required
+          labelColor="light"
         />
         <Input
           label={isEditMode ? 'Şifre (Değiştirmek için doldurun)' : 'Şifre'}
@@ -577,6 +579,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess 
           onBlur={() => handleBlur('password')}
           error={touched.password ? errors.password : undefined}
           required={!isEditMode}
+          labelColor="light"
         />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -598,12 +601,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess 
             type="text"
             value={values.firstName}
             onChange={(e) => handleChange('firstName', e.target.value)}
+            labelColor="light"
           />
           <Input
             label="Soyad"
             type="text"
             value={values.lastName}
             onChange={(e) => handleChange('lastName', e.target.value)}
+            labelColor="light"
           />
         </div>
         <div className="flex items-center">
@@ -709,6 +714,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose, category
           onBlur={() => handleBlur('name')}
           error={touched.name ? errors.name : undefined}
           required
+          labelColor="light"
         />
         <Input
           label="Açıklama"
@@ -716,6 +722,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose, category
           rows={4}
           value={values.description}
           onChange={(e) => handleChange('description', e.target.value)}
+          labelColor="light"
         />
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="secondary" onClick={onClose}>
@@ -823,6 +830,7 @@ const StoryModal: React.FC<StoryModalProps> = ({ isOpen, onClose, story, onSucce
           onBlur={() => handleBlur('title')}
           error={touched.title ? errors.title : undefined}
           required
+          labelColor="light"
         />
         <Input
           label="İçerik"
@@ -833,6 +841,7 @@ const StoryModal: React.FC<StoryModalProps> = ({ isOpen, onClose, story, onSucce
           onBlur={() => handleBlur('content')}
           error={touched.content ? errors.content : undefined}
           required
+          labelColor="light"
         />
         <Input
           label="Konum Adı"
@@ -840,6 +849,7 @@ const StoryModal: React.FC<StoryModalProps> = ({ isOpen, onClose, story, onSucce
           value={values.locationName}
           onChange={(e) => handleChange('locationName', e.target.value)}
           placeholder="Örn: İstanbul, Kadıköy"
+          labelColor="light"
         />
         <div className="flex items-center">
           <input

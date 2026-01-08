@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Comment } from '../../types';
 import { Card, CardBody, Button, Input } from '../ui';
 import { useAuth } from '../../contexts/AuthContext';
@@ -22,7 +22,27 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [newComment, setNewComment] = useState('');
+  const [commentActions, setCommentActions] = useState<Record<string, 'like' | 'dislike' | null>>({});
   const { execute: executeApiCall, isLoading: isSubmitting } = useApiCall();
+  const { execute: executeLikeComment } = useApiCall<{ comment: Comment; userAction: string | null }>();
+
+  // Initialize comment actions from API
+  useEffect(() => {
+    if (isAuthenticated && comments.length > 0) {
+      comments.forEach((comment) => {
+        commentsApi.getLikeStatus(comment.id)
+          .then((response) => {
+            setCommentActions((prev) => ({
+              ...prev,
+              [comment.id]: response.userAction as 'like' | 'dislike' | null,
+            }));
+          })
+          .catch(() => {
+            // Giriş yapmamış veya hata durumunda sessizce devam et
+          });
+      });
+    }
+  }, [comments, isAuthenticated]);
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
@@ -43,6 +63,40 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           setNewComment('');
           onCommentAdded();
         },
+      },
+    );
+  };
+
+  const handleLikeComment = async (commentId: string, action: 'like' | 'dislike') => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    await executeLikeComment(
+      () => commentsApi.like(commentId, action),
+      {
+        successMessage: (response) => {
+          if (response?.userAction === null) {
+            return MESSAGES.SUCCESS.VOTE_REMOVED;
+          } else if (response?.userAction === 'like') {
+            return MESSAGES.SUCCESS.LIKE_ADDED;
+          } else {
+            return MESSAGES.SUCCESS.DISLIKE_ADDED;
+          }
+        },
+        errorMessage: MESSAGES.ERROR.OPERATION_FAILED,
+        onSuccess: (response) => {
+          if (response) {
+            setCommentActions((prev) => ({
+              ...prev,
+              [commentId]: response.userAction as 'like' | 'dislike' | null,
+            }));
+            // Yorumları yeniden yükle (güncel like/dislike sayıları için)
+            onCommentAdded();
+          }
+        },
+        showToast: false, // Toast mesajını kaldırdık - StoryDetail'deki gibi sessiz çalışır
       },
     );
   };
@@ -106,12 +160,48 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     <p className="text-gray-700 mb-2 whitespace-pre-wrap">
                       {comment.content}
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-4 h-4" />
-                        <span>{comment.likes}</span>
+                    {isAuthenticated && (
+                      <div className="flex items-center gap-4 mt-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleLikeComment(comment.id, 'like')}
+                          className={`flex items-center gap-1 text-sm ${
+                            commentActions[comment.id] === 'like'
+                              ? 'text-green-600 bg-green-50'
+                              : 'text-gray-600 hover:text-green-600'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${commentActions[comment.id] === 'like' ? 'fill-green-600' : ''}`} />
+                          <span>{comment.likes || 0}</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleLikeComment(comment.id, 'dislike')}
+                          className={`flex items-center gap-1 text-sm ${
+                            commentActions[comment.id] === 'dislike'
+                              ? 'text-red-600 bg-red-50'
+                              : 'text-gray-600 hover:text-red-600'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 rotate-180 ${commentActions[comment.id] === 'dislike' ? 'fill-red-600' : ''}`} />
+                          <span>{comment.dislikes || 0}</span>
+                        </Button>
                       </div>
-                    </div>
+                    )}
+                    {!isAuthenticated && (
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mt-3">
+                        <div className="flex items-center gap-1">
+                          <Heart className="w-4 h-4" />
+                          <span>{comment.likes || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Heart className="w-4 h-4 rotate-180" />
+                          <span>{comment.dislikes || 0}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

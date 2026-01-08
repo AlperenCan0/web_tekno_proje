@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseService } from '../common/base.service';
 import { Comment } from '../entities/comment.entity';
+import { CommentLike } from '../entities/comment-like.entity';
 import { Story } from '../entities/story.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -17,6 +18,8 @@ export class CommentsService extends BaseService<Comment> {
   constructor(
     @InjectRepository(Comment)
     private commentsRepository: Repository<Comment>,
+    @InjectRepository(CommentLike)
+    private commentLikesRepository: Repository<CommentLike>,
     @InjectRepository(Story)
     private storiesRepository: Repository<Story>,
   ) {
@@ -108,19 +111,85 @@ export class CommentsService extends BaseService<Comment> {
 
   /**
    * Yorumu beğenir veya beğenmez
-   * Like/dislike sayısını artırır
-   * Not: Bu endpoint giriş yapmış kullanıcılar için açık olmalı (controller'da guard kontrol edilmeli)
+   * Her kullanıcı bir yoruma sadece bir kez tepki verebilir
+   * Aynı tepkiyi tekrar verirse geri alınır (toggle)
+   * Farklı tepki verirse değiştirilir
    */
-  async likeComment(id: string, likeCommentDto: LikeCommentDto): Promise<Comment> {
+  async likeComment(id: string, likeCommentDto: LikeCommentDto, userId: string): Promise<{ comment: Comment; userAction: string | null }> {
     const comment = await this.findOne(id);
 
-    if (likeCommentDto.action === 'like') {
-      comment.likes += 1;
-    } else {
-      comment.dislikes += 1;
-    }
+    // Kullanıcının mevcut tepkisini kontrol et
+    const existingLike = await this.commentLikesRepository.findOne({
+      where: { commentId: id, userId },
+    });
 
-    return this.commentsRepository.save(comment);
+    if (existingLike) {
+      // Aynı tepki verilmişse geri al (toggle)
+      if (existingLike.action === likeCommentDto.action) {
+        // Sayıyı azalt
+        if (existingLike.action === 'like') {
+          comment.likes = Math.max(0, comment.likes - 1);
+        } else {
+          comment.dislikes = Math.max(0, comment.dislikes - 1);
+        }
+
+        // Like kaydını sil
+        await this.commentLikesRepository.remove(existingLike);
+        await this.commentsRepository.save(comment);
+
+        return { comment, userAction: null };
+      } else {
+        // Farklı tepki verilmişse değiştir
+        // Eski tepkiyi azalt
+        if (existingLike.action === 'like') {
+          comment.likes = Math.max(0, comment.likes - 1);
+        } else {
+          comment.dislikes = Math.max(0, comment.dislikes - 1);
+        }
+
+        // Yeni tepkiyi artır
+        if (likeCommentDto.action === 'like') {
+          comment.likes += 1;
+        } else {
+          comment.dislikes += 1;
+        }
+
+        // Like kaydını güncelle
+        existingLike.action = likeCommentDto.action;
+        await this.commentLikesRepository.save(existingLike);
+        await this.commentsRepository.save(comment);
+
+        return { comment, userAction: likeCommentDto.action };
+      }
+    } else {
+      // İlk kez tepki veriliyor
+      const newLike = this.commentLikesRepository.create({
+        userId,
+        commentId: id,
+        action: likeCommentDto.action,
+      });
+
+      if (likeCommentDto.action === 'like') {
+        comment.likes += 1;
+      } else {
+        comment.dislikes += 1;
+      }
+
+      await this.commentLikesRepository.save(newLike);
+      await this.commentsRepository.save(comment);
+
+      return { comment, userAction: likeCommentDto.action };
+    }
+  }
+
+  /**
+   * Kullanıcının bir yoruma verdiği tepkiyi getirir
+   */
+  async getUserLikeStatus(commentId: string, userId: string): Promise<string | null> {
+    const like = await this.commentLikesRepository.findOne({
+      where: { commentId, userId },
+    });
+    return like ? like.action : null;
   }
 }
 

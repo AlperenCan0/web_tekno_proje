@@ -139,3 +139,18 @@
   }
 }
 
+/* Leaflet z-index override - Navbar'ın üstüne çıkmaması için */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+.leaflet-popup,
+.leaflet-control {
+  z-index: 50 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 50 !important;
+}
+

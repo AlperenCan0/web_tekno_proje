@@ -117,8 +117,16 @@ export const commentsApi = {
   /**
    * Yorumu beğenir veya beğenmez
    */
-  like: async (id: string, action: 'like' | 'dislike'): Promise<Comment> => {
+  like: async (id: string, action: 'like' | 'dislike'): Promise<{ comment: Comment; userAction: string | null }> => {
     const response = await api.post(`/comments/${id}/like`, { action });
+    return response.data;
+  },
+
+  /**
+   * Kullanıcının bu yoruma verdiği tepkiyi getirir
+   */
+  getLikeStatus: async (id: string): Promise<{ userAction: string | null }> => {
+    const response = await api.get(`/comments/${id}/like-status`);
     return response.data;
   },
 };

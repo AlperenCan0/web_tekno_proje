@@ -9,7 +9,7 @@ import { StoriesModule } from './stories/stories.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CommentsModule } from './comments/comments.module';
 import { UploadModule } from './upload/upload.module';
-import { User, Profile, Story, StoryLike, Category, Comment } from './entities';
+import { User, Profile, Story, StoryLike, Category, Comment, CommentLike } from './entities';
 
 /**
  * Ana uygulama modülü
@@ -29,7 +29,7 @@ import { User, Profile, Story, StoryLike, Category, Comment } from './entities';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_DATABASE || 'local_stories',
-      entities: [User, Profile, Story, StoryLike, Category, Comment],
+      entities: [User, Profile, Story, StoryLike, Category, Comment, CommentLike],
       synchronize: process.env.NODE_ENV !== 'production', // Production'da false olmalı
       logging: false, // Logging kapalı - gereksiz log'ları önlemek için
     }),

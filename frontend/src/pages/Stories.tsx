@@ -6,7 +6,7 @@ import { StoryCard, SearchBar, FilterBar } from '../components/stories';
 import { Spinner } from '../components/ui';
 import { Container } from '../components/layout';
 import { Button } from '../components/ui';
-import { List, Map } from 'lucide-react';
+import { List, Map, BookOpen } from 'lucide-react';
 import { useApiCall } from '../hooks/useApiCall';
 import { MESSAGES } from '../constants/messages';
 
@@ -164,7 +164,7 @@ const Stories: React.FC = () => {
 
       {/* Content */}
       {viewMode === 'map' ? (
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-lg p-4 mb-6 relative z-0">
           <StoryMap stories={filteredAndSortedStories} />
         </div>
       ) : (
@@ -177,15 +177,28 @@ const Stories: React.FC = () => {
             </div>
           ) : (
             <div className="text-center py-16 bg-white rounded-lg shadow-md">
-              <div className="text-6xl mb-4">📖</div>
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center">
+                <BookOpen className="w-10 h-10 text-amber-600" />
+              </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {searchQuery || selectedCategories.length > 0 ? 'Sonuç bulunamadı' : 'Henüz hikaye yok'}
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 {searchQuery || selectedCategories.length > 0
                   ? 'Farklı bir arama terimi veya kategori deneyin'
                   : 'İlk hikayeyi paylaşmak için giriş yapın'}
               </p>
+              {searchQuery || selectedCategories.length > 0 ? (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSelectedCategories([]);
+                  }}
+                  className="px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium"
+                >
+                  Filtreleri Temizle
+                </button>
+              ) : null}
             </div>
           )}
         </>

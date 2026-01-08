@@ -55,6 +55,21 @@ export class CommentsController {
   }
 
   /**
+   * GET /comments/:id/like-status - Kullanıcının bu yoruma verdiği tepkiyi getirir
+   * Giriş yapmış kullanıcıların mevcut tepkisini kontrol eder
+   * Not: Bu route findOne'dan önce tanımlanmalı
+   */
+  @Get(':id/like-status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Kullanıcının bu yoruma verdiği tepkiyi getirir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcının mevcut tepkisi (like/dislike/null)' })
+  async getLikeStatus(@Param('id') id: string, @CurrentUser() user: any) {
+    const action = await this.commentsService.getUserLikeStatus(id, user.id);
+    return { userAction: action };
+  }
+
+  /**
    * GET /comments/:id - ID'ye göre yorum getirir
    * Herkes yorum detaylarını görebilir
    */
@@ -100,15 +115,20 @@ export class CommentsController {
 
   /**
    * POST /comments/:id/like - Yorumu beğenir veya beğenmez
-   * Giriş yapmış kullanıcılar yorumları beğenebilir/beğenmeyebilir
+   * Giriş yapmış kullanıcılar yorumları beğenebilir/beğenmeyebilir (her kullanıcı bir kez)
    */
   @Post(':id/like')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Yorumu beğenir veya beğenmez' })
   @ApiResponse({ status: 200, description: 'Beğeni işlemi başarılı' })
-  likeComment(@Param('id') id: string, @Body() likeCommentDto: LikeCommentDto) {
-    return this.commentsService.likeComment(id, likeCommentDto);
+  @ApiResponse({ status: 400, description: 'Bu yorumu zaten beğendiniz/beğenmediniz' })
+  likeComment(
+    @Param('id') id: string,
+    @Body() likeCommentDto: LikeCommentDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.commentsService.likeComment(id, likeCommentDto, user.id);
   }
 }
 

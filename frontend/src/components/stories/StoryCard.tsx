@@ -98,7 +98,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, delay = 0 }) => {
           {/* Author */}
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="flex items-center text-sm text-gray-600">
-              <div className="w-6 h-6 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-blue-500 to-purple-600 flex-shrink-0">
+              <div className="w-6 h-6 rounded-full overflow-hidden mr-2 bg-gradient-to-br from-amber-500 to-orange-600 flex-shrink-0">
                 {story.author.profile?.avatar ? (
                   <img
                     src={getPhotoUrl(story.author.profile.avatar)}

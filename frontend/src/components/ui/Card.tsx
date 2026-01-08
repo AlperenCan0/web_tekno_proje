@@ -108,4 +108,3 @@ export const CardFooter: React.FC<CardFooterProps> = ({
 };
 
 export default Card;
-
