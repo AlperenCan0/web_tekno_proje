@@ -70,7 +70,6 @@ const StoryDetail: React.FC = () => {
       const response = await storiesApi.getLikeStatus(id!);
       setUserAction(response.userAction as 'like' | 'dislike' | null);
     } catch (error: any) {
-      // Giriş yapmamış kullanıcılar için hata yoksay
     }
   };
 
@@ -120,7 +119,7 @@ const StoryDetail: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Hero Image Section - Küçültülmüş ve tıklanabilir */}
       {story.photos && story.photos.length > 0 && (
-        <div 
+        <div
           className="relative h-64 md:h-80 overflow-hidden bg-gradient-to-br from-amber-900 via-orange-900 to-amber-800 cursor-pointer group"
           onClick={() => {
             setSelectedImageIndex(0);
@@ -246,8 +245,8 @@ const StoryDetail: React.FC = () => {
 
                 {/* Image Gallery - Tüm fotoğraflar küçük thumbnail'ler olarak gösterilir */}
                 {story.photos && story.photos.length > 0 && (
-                  <ImageGallery 
-                    images={story.photos} 
+                  <ImageGallery
+                    images={story.photos}
                     title={story.title}
                     initialIndex={selectedImageIndex}
                     isOpen={imageModalOpen}

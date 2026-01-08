@@ -49,7 +49,6 @@ const Stories: React.FC = () => {
     );
   };
 
-  // Kategori toggle fonksiyonu
   const handleCategoryToggle = (categoryId: string) => {
     setSelectedCategories(prev =>
       prev.includes(categoryId)
@@ -58,18 +57,15 @@ const Stories: React.FC = () => {
     );
   };
 
-  // Filter and sort stories
   const filteredAndSortedStories = useMemo(() => {
     let filtered = stories;
 
-    // Category filter (çoklu)
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((story) =>
         story.categories?.some((cat) => selectedCategories.includes(cat.id))
       );
     }
 
-    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -80,7 +76,6 @@ const Stories: React.FC = () => {
       );
     }
 
-    // Sort
     const sorted = [...filtered].sort((a, b) => {
       switch (sortBy) {
         case 'newest':

@@ -46,7 +46,6 @@ export const useFormValidation = <T extends Record<string, any>>(
     (name: keyof T, value: T[keyof T]) => {
       setValues((prev) => ({ ...prev, [name]: value }));
 
-      // Eğer field daha önce touched olduysa, real-time validation yap
       if (touched[name]) {
         const error = validateField(name, value);
         setErrors((prev) => ({
@@ -123,8 +122,7 @@ export const validationRules = {
     }
     return null;
   },
-  optional: (value: any): string | null => {
-    // Optional field - her zaman geçerli
+  optional: (_value: any): string | null => {
     return null;
   },
 };

@@ -35,7 +35,6 @@ const Profile: React.FC = () => {
     const [settingsSubTab, setSettingsSubTab] = useState<SettingsSubTab>('profile');
     const [interactionsSubTab, setInteractionsSubTab] = useState<InteractionsSubTab>('favorites');
 
-    // Form states
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
@@ -44,7 +43,6 @@ const Profile: React.FC = () => {
     const [avatar, setAvatar] = useState('');
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
-    // Data states
     const [myStories, setMyStories] = useState<Story[]>([]);
     const [myComments, setMyComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -84,14 +82,11 @@ const Profile: React.FC = () => {
         setIsLoading(true);
         try {
             if (interactionsSubTab === 'favorites') {
-                // Tüm hikayeleri çek ve beğenilenlerini filtrele (basit yaklaşım)
                 const stories = await storiesApi.getMyStories();
                 setMyStories(stories);
             } else if (interactionsSubTab === 'comments') {
-                // Kendi hikayelerime gelen yorumları göster
                 const stories = await storiesApi.getMyStories();
                 setMyStories(stories);
-                // Tüm yorumları topla
                 const allComments: Comment[] = [];
                 stories.forEach(story => {
                     if (story.comments) {
@@ -145,7 +140,6 @@ const Profile: React.FC = () => {
 
         setIsSaving(true);
         try {
-            // API çağrısı yapılacak (backend'de endpoint gerekli)
             toast.success('Şifre başarıyla değiştirildi');
             setCurrentPassword('');
             setNewPassword('');

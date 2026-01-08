@@ -22,7 +22,6 @@ const AdminPanel: React.FC = () => {
   const { execute: executeApiCall, isLoading } = useApiCall();
   const { confirmDelete } = useDeleteConfirmation();
 
-  // Modal states
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
@@ -63,7 +62,6 @@ const AdminPanel: React.FC = () => {
     );
   };
 
-  // User CRUD
   const handleCreateUser = () => {
     setEditingUser(null);
     setUserModalOpen(true);
@@ -104,7 +102,6 @@ const AdminPanel: React.FC = () => {
     });
   };
 
-  // Category CRUD
   const handleCreateCategory = () => {
     setEditingCategory(null);
     setCategoryModalOpen(true);
@@ -130,7 +127,6 @@ const AdminPanel: React.FC = () => {
     });
   };
 
-  // Story CRUD
   const handleCreateStory = () => {
     setEditingStory(null);
     setStoryModalOpen(true);
@@ -451,7 +447,6 @@ const AdminPanel: React.FC = () => {
   );
 };
 
-// User Modal Component
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -635,7 +630,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user, onSuccess 
   );
 };
 
-// Category Modal Component
 interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -736,7 +730,6 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ isOpen, onClose, category
   );
 };
 
-// Story Modal Component
 interface StoryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -875,7 +868,6 @@ const StoryModal: React.FC<StoryModalProps> = ({ isOpen, onClose, story, onSucce
   );
 };
 
-// View User Modal Component
 interface ViewUserModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -982,7 +974,6 @@ const ViewUserModal: React.FC<ViewUserModalProps> = ({ isOpen, onClose, user }) 
   );
 };
 
-// View Story Modal Component
 interface ViewStoryModalProps {
   isOpen: boolean;
   onClose: () => void;

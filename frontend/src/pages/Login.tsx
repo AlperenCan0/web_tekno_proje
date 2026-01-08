@@ -32,7 +32,6 @@ const Login: React.FC = () => {
     },
   );
 
-  // Zaten giriş yapmışsa ana sayfaya yönlendir
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');

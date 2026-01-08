@@ -24,12 +24,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Axios instance - API istekleri için
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// Request interceptor - Her istekte token ekle
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -43,7 +41,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // LocalStorage'dan token yükle ve kullanıcı bilgilerini doğrula
   useEffect(() => {
     const initializeAuth = async () => {
       const storedToken = localStorage.getItem('token');
@@ -52,7 +49,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
           setToken(storedToken);
 
-          // Backend'den güncel kullanıcı bilgilerini çek
           const response = await api.get('/users/me');
           const userData = response.data;
 
@@ -60,7 +56,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           localStorage.setItem('user', JSON.stringify(userData));
         } catch (error) {
           console.error('Session restore failed:', error);
-          // Token geçersizse temizle
           setToken(null);
           setUser(null);
           localStorage.removeItem('token');
@@ -170,6 +165,5 @@ export const useAuth = () => {
   return context;
 };
 
-// API instance'ı export et
 export { api };
 

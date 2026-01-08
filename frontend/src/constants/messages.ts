@@ -3,7 +3,6 @@
  * Tekrarlanan mesajları önler ve tutarlılık sağlar
  */
 export const MESSAGES = {
-  // Success messages
   SUCCESS: {
     LOGIN: 'Giriş başarılı!',
     REGISTER: 'Kayıt başarılı!',
@@ -26,7 +25,6 @@ export const MESSAGES = {
     CATEGORY_DELETED: 'Kategori silindi',
   },
 
-  // Error messages
   ERROR: {
     LOGIN_FAILED: 'Giriş başarısız',
     REGISTER_FAILED: 'Kayıt başarısız',
@@ -54,7 +52,6 @@ export const MESSAGES = {
     CATEGORY_DELETE_FAILED: 'Kategori silinirken bir hata oluştu',
   },
 
-  // Validation messages
   VALIDATION: {
     EMAIL_REQUIRED: 'E-posta adresi gereklidir',
     PASSWORD_REQUIRED: 'Şifre gereklidir',

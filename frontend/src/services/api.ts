@@ -6,7 +6,6 @@ import { Story, Comment, Category, User } from '../types';
  * Tüm CRUD işlemleri için API çağrıları
  */
 
-// Stories API
 export const storiesApi = {
   /**
    * Tüm hikayeleri getirir
@@ -72,7 +71,6 @@ export const storiesApi = {
   },
 };
 
-// Comments API
 export const commentsApi = {
   /**
    * Tüm yorumları getirir
@@ -131,7 +129,6 @@ export const commentsApi = {
   },
 };
 
-// Categories API
 export const categoriesApi = {
   /**
    * Tüm kategorileri getirir
@@ -173,7 +170,6 @@ export const categoriesApi = {
   },
 };
 
-// Users API
 export const usersApi = {
   /**
    * Tüm kullanıcıları getirir (Admin/SuperAdmin)
@@ -231,7 +227,6 @@ export const usersApi = {
   },
 };
 
-// Upload API
 export const uploadApi = {
   /**
    * Fotoğraf yükler
