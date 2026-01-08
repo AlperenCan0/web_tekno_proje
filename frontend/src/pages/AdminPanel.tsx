@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { usersApi, categoriesApi, storiesApi } from '../services/api';
 import { User, Category, Story } from '../types';
-import toast from 'react-hot-toast';
+import { useApiCall } from '../hooks/useApiCall';
+import { useDeleteConfirmation } from '../hooks/useDeleteConfirmation';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Admin Panel Component - Yönetim paneli
@@ -13,48 +15,51 @@ const AdminPanel: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { execute: executeApiCall, isLoading } = useApiCall();
+  const { confirmDelete } = useDeleteConfirmation();
 
   useEffect(() => {
     loadData();
   }, [activeTab]);
 
   const loadData = async () => {
-    setIsLoading(true);
-    try {
-      switch (activeTab) {
-        case 'users':
-          const usersData = await usersApi.getAll();
-          setUsers(usersData);
-          break;
-        case 'categories':
-          const categoriesData = await categoriesApi.getAll();
-          setCategories(categoriesData);
-          break;
-        case 'stories':
-          const storiesData = await storiesApi.getAll(false);
-          setStories(storiesData);
-          break;
-      }
-    } catch (error: any) {
-      toast.error('Veriler yüklenirken bir hata oluştu');
-    } finally {
-      setIsLoading(false);
-    }
+    await executeApiCall(
+      async () => {
+        switch (activeTab) {
+          case 'users':
+            const usersData = await usersApi.getAll();
+            setUsers(usersData);
+            break;
+          case 'categories':
+            const categoriesData = await categoriesApi.getAll();
+            setCategories(categoriesData);
+            break;
+          case 'stories':
+            const storiesData = await storiesApi.getAll(false);
+            setStories(storiesData);
+            break;
+        }
+      },
+      {
+        errorMessage: MESSAGES.ERROR.DATA_LOAD_FAILED,
+        showToast: false,
+      },
+    );
   };
 
   const handleDeleteStory = async (id: string) => {
-    if (!window.confirm('Bu hikayeyi silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      await storiesApi.delete(id);
-      await loadData();
-      toast.success('Hikaye silindi');
-    } catch (error: any) {
-      toast.error('Hikaye silinirken bir hata oluştu');
-    }
+    confirmDelete(async () => {
+      await executeApiCall(
+        () => storiesApi.delete(id),
+        {
+          successMessage: MESSAGES.SUCCESS.STORY_DELETED,
+          errorMessage: MESSAGES.ERROR.STORY_DELETE_FAILED,
+          onSuccess: () => {
+            loadData();
+          },
+        },
+      );
+    });
   };
 
   return (

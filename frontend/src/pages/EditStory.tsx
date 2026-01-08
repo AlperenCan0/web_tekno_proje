@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { storiesApi } from '../services/api';
 import { Story } from '../types';
 import { StoryForm, StoryFormData } from '../components/stories';
-import toast from 'react-hot-toast';
+import { useApiCall } from '../hooks/useApiCall';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Edit Story Page Component - Hikaye düzenleme sayfası
@@ -13,8 +14,8 @@ const EditStory: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [story, setStory] = useState<Story | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingStory, setIsLoadingStory] = useState(true);
+  const { execute: executeApiCall, isLoading } = useApiCall<Story>();
+  const { execute: executeLoadStory, isLoading: isLoadingStory } = useApiCall<Story>();
 
   useEffect(() => {
     if (id) {
@@ -23,22 +24,24 @@ const EditStory: React.FC = () => {
   }, [id]);
 
   const loadStory = async () => {
-    try {
-      setIsLoadingStory(true);
-      const storyData = await storiesApi.getById(id!);
-      setStory(storyData);
-    } catch (error) {
-      toast.error('Hikaye yüklenirken bir hata oluştu');
-      navigate('/my-stories');
-    } finally {
-      setIsLoadingStory(false);
-    }
+    await executeLoadStory(
+      () => storiesApi.getById(id!),
+      {
+        errorMessage: MESSAGES.ERROR.STORY_LOAD_FAILED,
+        onSuccess: (data) => {
+          if (data) setStory(data);
+        },
+        onError: () => {
+          navigate('/my-stories');
+        },
+        showToast: false,
+      },
+    );
   };
 
   const handleSubmit = async (data: StoryFormData) => {
-    setIsLoading(true);
-    try {
-      await storiesApi.update(id!, {
+    await executeApiCall(
+      () => storiesApi.update(id!, {
         title: data.title,
         content: data.content,
         latitude: data.latitude ? parseFloat(data.latitude) : undefined,
@@ -47,14 +50,15 @@ const EditStory: React.FC = () => {
         photos: data.photos.length > 0 ? data.photos : undefined,
         categoryIds: data.selectedCategories,
         isPublished: data.isPublished,
-      });
-      toast.success('Hikaye başarıyla güncellendi');
-      navigate('/my-stories');
-    } catch (error) {
-      toast.error('Hikaye güncellenirken bir hata oluştu');
-    } finally {
-      setIsLoading(false);
-    }
+      }),
+      {
+        successMessage: MESSAGES.SUCCESS.STORY_UPDATED,
+        errorMessage: MESSAGES.ERROR.STORY_UPDATE_FAILED,
+        onSuccess: () => {
+          navigate('/my-stories');
+        },
+      },
+    );
   };
 
   const handleCancel = () => {

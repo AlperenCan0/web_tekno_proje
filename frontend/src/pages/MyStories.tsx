@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { storiesApi } from '../services/api';
 import { Story } from '../types';
 import { getPhotoUrl } from '../config';
-import toast from 'react-hot-toast';
+import { useApiCall } from '../hooks/useApiCall';
+import { useDeleteConfirmation } from '../hooks/useDeleteConfirmation';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * My Stories Page Component - Kullanıcının kendi hikayelerini listeler
@@ -11,36 +13,39 @@ import toast from 'react-hot-toast';
  */
 const MyStories: React.FC = () => {
   const [stories, setStories] = useState<Story[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { execute: executeApiCall, isLoading } = useApiCall<Story[]>();
+  const { confirmDelete } = useDeleteConfirmation();
 
   useEffect(() => {
     loadStories();
   }, []);
 
   const loadStories = async () => {
-    try {
-      setIsLoading(true);
-      const storiesData = await storiesApi.getMyStories();
-      setStories(storiesData);
-    } catch (error: any) {
-      toast.error('Hikayeler yüklenirken bir hata oluştu');
-    } finally {
-      setIsLoading(false);
-    }
+    await executeApiCall(
+      () => storiesApi.getMyStories(),
+      {
+        errorMessage: MESSAGES.ERROR.STORIES_LOAD_FAILED,
+        onSuccess: (data) => {
+          if (data) setStories(data);
+        },
+        showToast: false,
+      },
+    );
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Bu hikayeyi silmek istediğinize emin misiniz?')) {
-      return;
-    }
-
-    try {
-      await storiesApi.delete(id);
-      await loadStories();
-      toast.success('Hikaye silindi');
-    } catch (error: any) {
-      toast.error('Hikaye silinirken bir hata oluştu');
-    }
+    confirmDelete(async () => {
+      await executeApiCall(
+        () => storiesApi.delete(id),
+        {
+          successMessage: MESSAGES.SUCCESS.STORY_DELETED,
+          errorMessage: MESSAGES.ERROR.STORY_DELETE_FAILED,
+          onSuccess: () => {
+            loadStories();
+          },
+        },
+      );
+    });
   };
 
   if (isLoading) {

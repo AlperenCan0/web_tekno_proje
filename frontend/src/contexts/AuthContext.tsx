@@ -50,9 +50,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (storedToken) {
         try {
-          // Token varsa global header'a ekle (gerçi interceptor zaten yapıyor ama ilk açılışta garanti olsun)
-          // api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-
           setToken(storedToken);
 
           // Backend'den güncel kullanıcı bilgilerini çek

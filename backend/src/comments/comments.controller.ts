@@ -100,9 +100,11 @@ export class CommentsController {
 
   /**
    * POST /comments/:id/like - Yorumu beğenir veya beğenmez
-   * Herkes yorumları beğenebilir/beğenmeyebilir
+   * Giriş yapmış kullanıcılar yorumları beğenebilir/beğenmeyebilir
    */
   @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Yorumu beğenir veya beğenmez' })
   @ApiResponse({ status: 200, description: 'Beğeni işlemi başarılı' })
   likeComment(@Param('id') id: string, @Body() likeCommentDto: LikeCommentDto) {

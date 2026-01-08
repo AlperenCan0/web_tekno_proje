@@ -4,6 +4,7 @@ import { Category, Story } from '../../types';
 import { getPhotoUrl } from '../../config';
 import LocationPicker from '../LocationPicker';
 import toast from 'react-hot-toast';
+import { MESSAGES } from '../../constants/messages';
 
 /**
  * StoryFormData - Form verileri için tip
@@ -83,7 +84,7 @@ const StoryForm: React.FC<StoryFormProps> = ({
             const categoriesData = await categoriesApi.getAll();
             setCategories(categoriesData);
         } catch (error) {
-            toast.error('Kategoriler yüklenirken bir hata oluştu');
+            toast.error(MESSAGES.ERROR.CATEGORIES_LOAD_FAILED);
         } finally {
             setIsCategoriesLoading(false);
         }
@@ -100,9 +101,9 @@ const StoryForm: React.FC<StoryFormProps> = ({
             const results = await Promise.all(uploadPromises);
             const newPhotos = results.map((result) => result.url);
             setPhotos((prev) => [...prev, ...newPhotos]);
-            toast.success('Fotoğraflar yüklendi');
+            toast.success(MESSAGES.SUCCESS.PHOTO_UPLOADED);
         } catch (error) {
-            toast.error('Fotoğraf yüklenirken bir hata oluştu');
+            toast.error(MESSAGES.ERROR.PHOTO_UPLOAD_FAILED);
         } finally {
             setIsUploading(false);
             // Input'u temizle (aynı dosyaları tekrar seçebilmek için)
@@ -129,7 +130,7 @@ const StoryForm: React.FC<StoryFormProps> = ({
         e.preventDefault();
 
         if (!title.trim() || !content.trim()) {
-            toast.error('Başlık ve içerik zorunludur');
+            toast.error(MESSAGES.ERROR.TITLE_CONTENT_REQUIRED);
             return;
         }
 

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
+import { BaseService } from '../common/base.service';
 import { Story } from '../entities/story.entity';
 import { StoryLike } from '../entities/story-like.entity';
 import { Category } from '../entities/category.entity';
@@ -13,7 +14,7 @@ import { LikeStoryDto } from './dto/like-story.dto';
  * CRUD operasyonları, like/dislike ve kategori yönetimi işlemlerini gerçekleştirir
  */
 @Injectable()
-export class StoriesService {
+export class StoriesService extends BaseService<Story> {
   constructor(
     @InjectRepository(Story)
     private storiesRepository: Repository<Story>,
@@ -21,7 +22,9 @@ export class StoriesService {
     private storyLikesRepository: Repository<StoryLike>,
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-  ) { }
+  ) {
+    super();
+  }
 
   /**
    * Yeni hikaye oluşturur
@@ -67,16 +70,12 @@ export class StoriesService {
    * ID'ye göre hikaye getirir
    */
   async findOne(id: string): Promise<Story> {
-    const story = await this.storiesRepository.findOne({
-      where: { id },
-      relations: ['author', 'author.profile', 'categories', 'comments', 'comments.author'],
-    });
-
-    if (!story) {
-      throw new NotFoundException(`ID ${id} ile hikaye bulunamadı`);
-    }
-
-    return story;
+    return this.findOneOrFail(
+      this.storiesRepository,
+      id,
+      'hikaye',
+      ['author', 'author.profile', 'categories', 'comments', 'comments.author'],
+    );
   }
 
   /**
@@ -98,9 +97,7 @@ export class StoriesService {
     const story = await this.findOne(id);
 
     // Yetki kontrolü
-    if (userRole === 'User' && story.authorId !== userId) {
-      throw new ForbiddenException('Bu hikayeyi güncelleme yetkiniz yok');
-    }
+    this.checkOwnership(story, userId, userRole, 'Bu hikayeyi güncelleme yetkiniz yok');
 
     // Kategorileri güncelle
     if (updateStoryDto.categoryIds) {
@@ -123,9 +120,7 @@ export class StoriesService {
     const story = await this.findOne(id);
 
     // Yetki kontrolü
-    if (userRole === 'User' && story.authorId !== userId) {
-      throw new ForbiddenException('Bu hikayeyi silme yetkiniz yok');
-    }
+    this.checkOwnership(story, userId, userRole, 'Bu hikayeyi silme yetkiniz yok');
 
     await this.storiesRepository.remove(story);
   }

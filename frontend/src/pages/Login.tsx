@@ -1,36 +1,62 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { AuthLayout } from '../components/auth';
 import { Input, Button } from '../components/ui';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { useFormValidation, validationRules } from '../hooks/useFormValidation';
 
 /**
  * Login Page Component - Kullanıcı giriş sayfası
  * Modern split-screen tasarım ile yeniden tasarlandı
  */
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    validateAll,
+  } = useFormValidation(
+    { email: '', password: '' },
+    {
+      email: validationRules.email,
+      password: validationRules.required,
+    },
+  );
 
   // Zaten giriş yapmışsa ana sayfaya yönlendir
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
+
   if (isAuthenticated) {
-    navigate('/');
     return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
+    if (!validateAll()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(values.email, values.password);
       navigate('/');
-    } catch (error) {
-      // Error toast is already shown in AuthContext
+    } catch (error: any) {
+      setSubmitError(error.response?.data?.message || 'Giriş başarısız. Lütfen tekrar deneyin.');
     } finally {
       setIsLoading(false);
     }
@@ -41,27 +67,42 @@ const Login: React.FC = () => {
       title="Hoş Geldiniz"
       subtitle="Hesabınıza giriş yapın ve hikayelerinize devam edin"
     >
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+        {submitError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">{submitError}</p>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-4">
           <Input
             id="email"
             type="email"
             label="E-posta"
             placeholder="ornek@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={values.email}
+            onChange={(e) => handleChange('email', e.target.value)}
+            onBlur={() => handleBlur('email')}
+            error={touched.email ? errors.email : undefined}
             required
             leftIcon={<Mail className="w-5 h-5" />}
+            autoComplete="email"
           />
           <Input
             id="password"
             type="password"
             label="Şifre"
             placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={values.password}
+            onChange={(e) => handleChange('password', e.target.value)}
+            onBlur={() => handleBlur('password')}
+            error={touched.password ? errors.password : undefined}
             required
             leftIcon={<Lock className="w-5 h-5" />}
+            autoComplete="current-password"
           />
         </div>
 

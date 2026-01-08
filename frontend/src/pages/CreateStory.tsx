@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { storiesApi } from '../services/api';
 import { StoryForm, StoryFormData } from '../components/stories';
-import toast from 'react-hot-toast';
+import { useApiCall } from '../hooks/useApiCall';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Create Story Page Component - Yeni hikaye oluşturma sayfası
@@ -10,12 +10,11 @@ import toast from 'react-hot-toast';
  */
 const CreateStory: React.FC = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const { execute: executeApiCall, isLoading } = useApiCall();
 
   const handleSubmit = async (data: StoryFormData) => {
-    setIsLoading(true);
-    try {
-      await storiesApi.create({
+    await executeApiCall(
+      () => storiesApi.create({
         title: data.title,
         content: data.content,
         latitude: data.latitude ? parseFloat(data.latitude) : undefined,
@@ -24,14 +23,15 @@ const CreateStory: React.FC = () => {
         photos: data.photos.length > 0 ? data.photos : undefined,
         categoryIds: data.selectedCategories,
         isPublished: data.isPublished,
-      });
-      toast.success('Hikaye başarıyla oluşturuldu');
-      navigate('/my-stories');
-    } catch (error) {
-      toast.error('Hikaye oluşturulurken bir hata oluştu');
-    } finally {
-      setIsLoading(false);
-    }
+      }),
+      {
+        successMessage: MESSAGES.SUCCESS.STORY_CREATED,
+        errorMessage: MESSAGES.ERROR.STORY_CREATE_FAILED,
+        onSuccess: () => {
+          navigate('/my-stories');
+        },
+      },
+    );
   };
 
   const handleCancel = () => {

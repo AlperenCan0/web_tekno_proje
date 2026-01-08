@@ -7,7 +7,8 @@ import { Spinner } from '../components/ui';
 import { Container } from '../components/layout';
 import { Button } from '../components/ui';
 import { List, Map } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { useApiCall } from '../hooks/useApiCall';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Stories Page Component - Tüm hikayeleri listeler
@@ -20,26 +21,32 @@ const Stories: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('newest');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [isLoading, setIsLoading] = useState(true);
+  const { execute: executeApiCall, isLoading } = useApiCall<[Story[], Category[]]>();
 
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
-    try {
-      setIsLoading(true);
-      const [storiesData, categoriesData] = await Promise.all([
-        storiesApi.getAll(true),
-        categoriesApi.getAll(),
-      ]);
-      setStories(storiesData);
-      setCategories(categoriesData);
-    } catch (error: any) {
-      toast.error('Hikayeler yüklenirken bir hata oluştu');
-    } finally {
-      setIsLoading(false);
-    }
+    await executeApiCall(
+      async () => {
+        const [storiesData, categoriesData] = await Promise.all([
+          storiesApi.getAll(true),
+          categoriesApi.getAll(),
+        ]);
+        return [storiesData, categoriesData] as [Story[], Category[]];
+      },
+      {
+        errorMessage: MESSAGES.ERROR.STORIES_LOAD_FAILED,
+        onSuccess: (data) => {
+          if (data) {
+            setStories(data[0]);
+            setCategories(data[1]);
+          }
+        },
+        showToast: false,
+      },
+    );
   };
 
   // Kategori toggle fonksiyonu

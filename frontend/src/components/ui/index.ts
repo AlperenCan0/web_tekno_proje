@@ -16,6 +16,9 @@ export type { SpinnerProps } from './Spinner';
 export { default as Skeleton } from './Skeleton';
 export type { SkeletonProps } from './Skeleton';
 
+export { default as PasswordStrength } from './PasswordStrength';
+export type { PasswordStrengthProps } from './PasswordStrength';
+
 
 
 

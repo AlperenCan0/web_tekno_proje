@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -76,7 +77,7 @@ export class UsersController {
   findOne(@Param('id') id: string, @CurrentUser() currentUser: any) {
     // Kullanıcı sadece kendi bilgilerine erişebilir (Admin/SuperAdmin hariç)
     if (currentUser.role === 'User' && currentUser.id !== id) {
-      throw new Error('Bu kullanıcıya erişim yetkiniz yok');
+      throw new ForbiddenException('Bu kullanıcıya erişim yetkiniz yok');
     }
     return this.usersService.findOne(id);
   }
@@ -95,7 +96,7 @@ export class UsersController {
   ) {
     // Kullanıcı sadece kendi bilgilerini güncelleyebilir (Admin/SuperAdmin hariç)
     if (currentUser.role === 'User' && currentUser.id !== id) {
-      throw new Error('Bu kullanıcıyı güncelleme yetkiniz yok');
+      throw new ForbiddenException('Bu kullanıcıyı güncelleme yetkiniz yok');
     }
     return this.usersService.update(id, updateUserDto);
   }

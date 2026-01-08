@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { BaseService } from '../common/base.service';
 import { Category } from '../entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -10,11 +11,13 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
  * CRUD operasyonları gerçekleştirir
  */
 @Injectable()
-export class CategoriesService {
+export class CategoriesService extends BaseService<Category> {
   constructor(
     @InjectRepository(Category)
     private categoriesRepository: Repository<Category>,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Yeni kategori oluşturur
@@ -39,16 +42,12 @@ export class CategoriesService {
    * ID'ye göre kategori getirir
    */
   async findOne(id: string): Promise<Category> {
-    const category = await this.categoriesRepository.findOne({
-      where: { id },
-      relations: ['stories', 'stories.author'],
-    });
-
-    if (!category) {
-      throw new NotFoundException(`ID ${id} ile kategori bulunamadı`);
-    }
-
-    return category;
+    return this.findOneOrFail(
+      this.categoriesRepository,
+      id,
+      'kategori',
+      ['stories', 'stories.author'],
+    );
   }
 
   /**

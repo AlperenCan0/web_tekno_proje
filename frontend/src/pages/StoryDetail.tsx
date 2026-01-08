@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { storiesApi, commentsApi } from '../services/api';
 import { Story, Comment } from '../types';
-import toast from 'react-hot-toast';
 import StoryMap from '../components/StoryMap';
 import { Card, CardBody, Button, Spinner } from '../components/ui';
 import { Container } from '../components/layout';
-import { AuthorCard, CommentSection } from '../components/stories';
+import { AuthorCard, CommentSection, ImageGallery } from '../components/stories';
 import { ArrowLeft, Heart, MapPin, Calendar, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getPhotoUrl } from '../config';
+import { useApiCall } from '../hooks/useApiCall';
+import { MESSAGES } from '../constants/messages';
 
 /**
  * Story Detail Page Component - Hikaye detay sayfası
@@ -20,8 +21,12 @@ const StoryDetail: React.FC = () => {
   const navigate = useNavigate();
   const [story, setStory] = useState<Story | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [userAction, setUserAction] = useState<'like' | 'dislike' | null>(null);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { execute: executeLoadStory, isLoading } = useApiCall<Story>();
+  const { execute: executeLoadComments } = useApiCall<Comment[]>();
+  const { execute: executeLikeStory } = useApiCall<{ story: Story; userAction: string | null }>();
 
   useEffect(() => {
     if (id) {
@@ -32,25 +37,32 @@ const StoryDetail: React.FC = () => {
   }, [id]);
 
   const loadStory = async () => {
-    try {
-      setIsLoading(true);
-      const storyData = await storiesApi.getById(id!);
-      setStory(storyData);
-    } catch (error: any) {
-      toast.error('Hikaye yüklenirken bir hata oluştu');
-      navigate('/stories');
-    } finally {
-      setIsLoading(false);
-    }
+    await executeLoadStory(
+      () => storiesApi.getById(id!),
+      {
+        errorMessage: MESSAGES.ERROR.STORY_LOAD_FAILED,
+        onSuccess: (data) => {
+          if (data) setStory(data);
+        },
+        onError: () => {
+          navigate('/stories');
+        },
+        showToast: false,
+      },
+    );
   };
 
   const loadComments = async () => {
-    try {
-      const commentsData = await commentsApi.getAll(id);
-      setComments(commentsData);
-    } catch (error: any) {
-      toast.error('Yorumlar yüklenirken bir hata oluştu');
-    }
+    await executeLoadComments(
+      () => commentsApi.getAll(id),
+      {
+        errorMessage: MESSAGES.ERROR.COMMENTS_LOAD_FAILED,
+        onSuccess: (data) => {
+          if (data) setComments(data);
+        },
+        showToast: false,
+      },
+    );
   };
 
   const loadLikeStatus = async () => {
@@ -67,22 +79,27 @@ const StoryDetail: React.FC = () => {
   };
 
   const handleLikeStory = async (action: 'like' | 'dislike') => {
-    try {
-      const response = await storiesApi.like(id!, action);
-      // Backend'den dönen güncel veriyi kullan
-      setStory(response.story);
-      setUserAction(response.userAction as 'like' | 'dislike' | null);
-
-      if (response.userAction === null) {
-        toast.success('Oy geri alındı');
-      } else if (response.userAction === 'like') {
-        toast.success('Beğenildi');
-      } else {
-        toast.success('Beğenilmedi');
-      }
-    } catch (error: any) {
-      toast.error('İşlem başarısız');
-    }
+    await executeLikeStory(
+      () => storiesApi.like(id!, action),
+      {
+        successMessage: (response) => {
+          if (response?.userAction === null) {
+            return MESSAGES.SUCCESS.VOTE_REMOVED;
+          } else if (response?.userAction === 'like') {
+            return MESSAGES.SUCCESS.LIKE_ADDED;
+          } else {
+            return MESSAGES.SUCCESS.DISLIKE_ADDED;
+          }
+        },
+        errorMessage: MESSAGES.ERROR.OPERATION_FAILED,
+        onSuccess: (response) => {
+          if (response) {
+            setStory(response.story);
+            setUserAction(response.userAction as 'like' | 'dislike' | null);
+          }
+        },
+      },
+    );
   };
 
   if (isLoading) {
@@ -101,23 +118,34 @@ const StoryDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Image Section */}
+      {/* Hero Image Section - Küçültülmüş ve tıklanabilir */}
       {story.photos && story.photos.length > 0 && (
-        <div className="relative h-96 md:h-[500px] overflow-hidden">
+        <div 
+          className="relative h-64 md:h-80 overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 cursor-pointer group"
+          onClick={() => {
+            setSelectedImageIndex(0);
+            setImageModalOpen(true);
+          }}
+        >
           <img
             src={getPhotoUrl(story.photos[0])}
             alt={story.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover opacity-80 transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-8">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent group-hover:from-black/70 transition-all duration-300" />
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium">
+              Fotoğrafı büyütmek için tıklayın
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 pointer-events-none">
             <Container>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">
                   {story.title}
                 </h1>
               </motion.div>
@@ -216,18 +244,19 @@ const StoryDetail: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Additional Photos */}
-                {story.photos && story.photos.length > 1 && (
-                  <div className="mt-8 grid grid-cols-2 gap-4">
-                    {story.photos.slice(1).map((photo, index) => (
-                      <img
-                        key={index}
-                        src={getPhotoUrl(photo)}
-                        alt={`${story.title} - Fotoğraf ${index + 2}`}
-                        className="w-full h-64 object-cover rounded-lg shadow-md"
-                      />
-                    ))}
-                  </div>
+                {/* Image Gallery - Tüm fotoğraflar küçük thumbnail'ler olarak gösterilir */}
+                {story.photos && story.photos.length > 0 && (
+                  <ImageGallery 
+                    images={story.photos} 
+                    title={story.title}
+                    initialIndex={selectedImageIndex}
+                    isOpen={imageModalOpen}
+                    onClose={() => setImageModalOpen(false)}
+                    onImageClick={(index) => {
+                      setSelectedImageIndex(index);
+                      setImageModalOpen(true);
+                    }}
+                  />
                 )}
               </CardBody>
             </Card>

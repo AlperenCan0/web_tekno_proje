@@ -4,8 +4,9 @@ import { Card, CardBody, Button, Input } from '../ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { MessageCircle, Heart, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import { commentsApi } from '../../services/api';
+import { useApiCall } from '../../hooks/useApiCall';
+import { MESSAGES } from '../../constants/messages';
 
 export interface CommentSectionProps {
   storyId: string;
@@ -21,31 +22,29 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [newComment, setNewComment] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { execute: executeApiCall, isLoading: isSubmitting } = useApiCall();
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
-      toast.error('Yorum boş olamaz');
       return;
     }
 
     if (!isAuthenticated) {
-      toast.error('Yorum yapmak için giriş yapmalısınız');
       navigate('/login');
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      await commentsApi.create({ content: newComment, storyId });
-      setNewComment('');
-      await onCommentAdded();
-      toast.success('Yorum eklendi');
-    } catch (error: any) {
-      toast.error('Yorum eklenirken bir hata oluştu');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await executeApiCall(
+      () => commentsApi.create({ content: newComment, storyId }),
+      {
+        successMessage: MESSAGES.SUCCESS.COMMENT_ADDED,
+        errorMessage: MESSAGES.ERROR.COMMENT_ADD_FAILED,
+        onSuccess: () => {
+          setNewComment('');
+          onCommentAdded();
+        },
+      },
+    );
   };
 
   return (

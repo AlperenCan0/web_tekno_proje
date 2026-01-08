@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.entity';
 import { Profile } from '../entities/profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -97,7 +98,6 @@ export class UsersService {
 
     // Şifre varsa hashle
     if (userData.password) {
-      const bcrypt = require('bcrypt');
       userData.password = await bcrypt.hash(userData.password, 10);
     }
 

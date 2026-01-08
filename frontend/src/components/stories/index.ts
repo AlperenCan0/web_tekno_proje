@@ -4,10 +4,12 @@ export { default as FilterBar } from './FilterBar';
 export { default as AuthorCard } from './AuthorCard';
 export { default as CommentSection } from './CommentSection';
 export { default as StoryForm } from './StoryForm';
+export { default as ImageGallery } from './ImageGallery';
 export type { StoryCardProps } from './StoryCard';
 export type { SearchBarProps } from './SearchBar';
 export type { FilterBarProps } from './FilterBar';
 export type { AuthorCardProps } from './AuthorCard';
 export type { CommentSectionProps } from './CommentSection';
 export type { StoryFormData } from './StoryForm';
+export type { ImageGalleryProps } from './ImageGallery';
 

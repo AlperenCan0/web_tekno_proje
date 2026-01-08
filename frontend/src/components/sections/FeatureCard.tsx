@@ -21,21 +21,22 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   delay = 0,
 }) => {
   const content = (
-    <Card hover className="h-full">
+    <Card hover className="h-full bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
       <CardHeader>
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mb-4">
+        <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 shadow-lg transform hover:scale-110 transition-transform duration-300">
           <Icon className="w-6 h-6 text-white" />
         </div>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{title}</CardTitle>
       </CardHeader>
       <CardBody>
-        <p className="text-gray-600 mb-4">{description}</p>
+        <p className="text-gray-600 mb-4 leading-relaxed">{description}</p>
         {link && (
           <a
             href={link}
-            className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center transition-colors"
+            className="text-indigo-600 hover:text-purple-600 font-medium inline-flex items-center transition-all duration-200 hover:gap-2 group"
           >
             {linkText}
+            <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
           </a>
         )}
       </CardBody>

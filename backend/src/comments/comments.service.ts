@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { BaseService } from '../common/base.service';
 import { Comment } from '../entities/comment.entity';
 import { Story } from '../entities/story.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -12,13 +13,15 @@ import { LikeCommentDto } from './dto/like-comment.dto';
  * CRUD operasyonları ve like/dislike işlemlerini gerçekleştirir
  */
 @Injectable()
-export class CommentsService {
+export class CommentsService extends BaseService<Comment> {
   constructor(
     @InjectRepository(Comment)
     private commentsRepository: Repository<Comment>,
     @InjectRepository(Story)
     private storiesRepository: Repository<Story>,
-  ) {}
+  ) {
+    super();
+  }
 
   /**
    * Yeni yorum oluşturur
@@ -57,16 +60,12 @@ export class CommentsService {
    * ID'ye göre yorum getirir
    */
   async findOne(id: string): Promise<Comment> {
-    const comment = await this.commentsRepository.findOne({
-      where: { id },
-      relations: ['author', 'author.profile', 'story'],
-    });
-
-    if (!comment) {
-      throw new NotFoundException(`ID ${id} ile yorum bulunamadı`);
-    }
-
-    return comment;
+    return this.findOneOrFail(
+      this.commentsRepository,
+      id,
+      'yorum',
+      ['author', 'author.profile', 'story'],
+    );
   }
 
   /**
@@ -88,9 +87,7 @@ export class CommentsService {
     const comment = await this.findOne(id);
 
     // Yetki kontrolü
-    if (userRole === 'User' && comment.authorId !== userId) {
-      throw new ForbiddenException('Bu yorumu güncelleme yetkiniz yok');
-    }
+    this.checkOwnership(comment, userId, userRole, 'Bu yorumu güncelleme yetkiniz yok');
 
     Object.assign(comment, updateCommentDto);
     return this.commentsRepository.save(comment);
@@ -104,9 +101,7 @@ export class CommentsService {
     const comment = await this.findOne(id);
 
     // Yetki kontrolü
-    if (userRole === 'User' && comment.authorId !== userId) {
-      throw new ForbiddenException('Bu yorumu silme yetkiniz yok');
-    }
+    this.checkOwnership(comment, userId, userRole, 'Bu yorumu silme yetkiniz yok');
 
     await this.commentsRepository.remove(comment);
   }
@@ -114,6 +109,7 @@ export class CommentsService {
   /**
    * Yorumu beğenir veya beğenmez
    * Like/dislike sayısını artırır
+   * Not: Bu endpoint giriş yapmış kullanıcılar için açık olmalı (controller'da guard kontrol edilmeli)
    */
   async likeComment(id: string, likeCommentDto: LikeCommentDto): Promise<Comment> {
     const comment = await this.findOne(id);
